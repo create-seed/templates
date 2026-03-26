@@ -1,0 +1,4 @@
+{
+  "extends": "@bun-platform/config/tsconfig.base.json",
+  "include": ["src", "test", "test-e2e", "test-integration"]
+}

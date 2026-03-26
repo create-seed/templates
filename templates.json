@@ -17,6 +17,26 @@
       "id": "gh:create-seed/templates/bun-monorepo",
       "name": "bun-monorepo",
       "path": "bun-monorepo"
+    },
+    {
+      "description": "Bun platform template with TanStack Start, Hono, oRPC, Better Auth, Drizzle, and shared UI packages",
+      "id": "gh:create-seed/templates/bun-platform",
+      "instructions": [
+        "Set up the local database:",
+        "+{pm} run db:local",
+        "Apply the schema once:",
+        "+{pm} run db:push",
+        "Seed the sample data:",
+        "+{pm} run db:seed",
+        "~",
+        "Your database is ready. Start the app:",
+        "+{pm} run dev:api",
+        "+{pm} run dev:web",
+        "~",
+        "Open http://localhost:3001 and sign in with alice@example.com / password123"
+      ],
+      "name": "bun-platform",
+      "path": "bun-platform"
     }
   ]
 }

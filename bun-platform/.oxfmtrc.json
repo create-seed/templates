@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "arrowParens": "always",
+  "experimentalSortImports": {
+    "internalPattern": ["@bun-platform/", "@/"],
+    "newlinesBetween": false,
+    "partitionByNewline": true
+  },
+  "experimentalSortPackageJson": {
+    "sortScripts": true
+  },
+  "experimentalTailwindcss": {
+    "functions": ["clsx", "cn", "cva"]
+  },
+  "ignorePatterns": ["apps/web/src/routeTree.gen.ts", ".agents/**"],
+  "printWidth": 120,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "all"
+}

@@ -1,0 +1,13 @@
+{
+  "extends": "@bun-platform/config/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@bun-platform/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "test", "test-e2e", "test-integration"],
+  "exclude": ["node_modules"]
+}

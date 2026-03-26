@@ -1,0 +1,35 @@
+{
+  "name": "@bun-platform/db",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:local": "turso dev --db-file local.db",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:seed": "bun run ./src/seed.ts",
+    "db:studio": "drizzle-kit studio",
+    "test": "bun test ./test",
+    "test:integration": "bun test --timeout 15000 ./test-integration"
+  },
+  "dependencies": {
+    "@bun-platform/env": "workspace:*",
+    "@libsql/client": "catalog:",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "libsql": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@bun-platform/config": "workspace:*",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "^5"
+  }
+}

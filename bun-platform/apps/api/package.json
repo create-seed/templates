@@ -1,0 +1,34 @@
+{
+  "name": "api",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsdown",
+    "check-types": "tsc -b",
+    "compile": "bun build --compile --minify --sourcemap --bytecode ./src/index.ts --outfile api",
+    "dev": "bun run --hot src/index.ts",
+    "start": "bun run dist/index.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/devtools": "^0.0.15",
+    "@ai-sdk/google": "^3.0.61",
+    "@bun-platform/api": "workspace:*",
+    "@bun-platform/auth": "workspace:*",
+    "@bun-platform/db": "workspace:*",
+    "@bun-platform/env": "workspace:*",
+    "@orpc/openapi": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/zod": "catalog:",
+    "ai": "catalog:",
+    "better-auth": "catalog:",
+    "dotenv": "catalog:",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@bun-platform/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "tsdown": "^0.16.5",
+    "typescript": "^5"
+  }
+}

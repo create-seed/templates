@@ -1,0 +1,25 @@
+{
+  "name": "@bun-platform/sdk",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc -b",
+    "test": "bun test ./test",
+    "test:e2e": "bun test --timeout 30000 ./test-e2e"
+  },
+  "dependencies": {
+    "@bun-platform/api": "workspace:*",
+    "@bun-platform/db": "workspace:*",
+    "@orpc/client": "catalog:"
+  },
+  "devDependencies": {
+    "@bun-platform/config": "workspace:*",
+    "@types/bun": "catalog:",
+    "better-auth": "catalog:",
+    "typescript": "^5"
+  }
+}

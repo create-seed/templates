@@ -1,0 +1,11 @@
+{
+  "extends": "@bun-platform/config/tsconfig.base.json",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "composite": true
+  },
+  "include": ["src", "test", "test-e2e", "test-integration"]
+}

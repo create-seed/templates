@@ -1,0 +1,31 @@
+// Better-T-Stack
+//
+// Website: https://www.better-t-stack.dev/
+// Stack Builder: https://www.better-t-stack.dev/new
+// Analytics: https://www.better-t-stack.dev/analytics
+// Showcase: https://www.better-t-stack.dev/showcase
+// Sponsor: https://github.com/sponsors/AmanVarshney01
+//
+// Add new addons with: bun create better-t-stack add
+// This file is safe to delete
+
+{
+  "$schema": "https://r2.better-t-stack.dev/schema.json",
+  "version": "3.25.5",
+  "createdAt": "2026-03-15T16:06:47.198Z",
+  "reproducibleCommand": "bun create better-t-stack@latest bun-platform --frontend tanstack-start --backend hono --runtime bun --database sqlite --orm drizzle --api orpc --auth better-auth --payments polar --addons lefthook oxlint skills turborepo --examples ai todo --db-setup turso --web-deploy none --server-deploy none --git --package-manager bun --install",
+  "database": "sqlite",
+  "orm": "drizzle",
+  "backend": "hono",
+  "runtime": "bun",
+  "frontend": ["tanstack-start"],
+  "addons": ["lefthook", "oxlint", "skills", "turborepo"],
+  "examples": ["ai", "todo"],
+  "auth": "better-auth",
+  "payments": "polar",
+  "packageManager": "bun",
+  "dbSetup": "turso",
+  "api": "orpc",
+  "webDeploy": "none",
+  "serverDeploy": "none",
+}

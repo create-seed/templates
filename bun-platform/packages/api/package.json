@@ -1,0 +1,38 @@
+{
+  "name": "@bun-platform/api",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./app": {
+      "default": "./src/app.ts"
+    },
+    "./router": {
+      "default": "./src/router.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsc -b"
+  },
+  "dependencies": {
+    "@bun-platform/auth": "workspace:*",
+    "@bun-platform/db": "workspace:*",
+    "@bun-platform/env": "workspace:*",
+    "@orpc/client": "catalog:",
+    "@orpc/openapi": "catalog:",
+    "@orpc/server": "catalog:",
+    "@orpc/zod": "catalog:",
+    "dotenv": "catalog:",
+    "drizzle-orm": "catalog:",
+    "hono": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@bun-platform/config": "workspace:*",
+    "typescript": "^5"
+  }
+}
