@@ -54,7 +54,6 @@
     "docker:run": "turbo run docker:run",
     "lint": "biome check --error-on-warnings",
     "lint:fix": "biome check --error-on-warnings --write",
-    "preinstall": "npx only-allow bun",
     "prepare": "lefthook install",
     "spell-check": "cspell -c ./cspell.config.mts .",
     "test": "true"

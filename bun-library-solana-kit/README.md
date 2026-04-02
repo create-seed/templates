@@ -1,6 +1,6 @@
 # bun-library-solana-kit
 
-TypeScript library template for Solana development using [`@solana/kit`](https://github.com/anza-xyz/kit).
+TypeScript library for Solana development using [`@solana/kit`](https://github.com/anza-xyz/kit).
 
 ## Features
 
@@ -10,15 +10,19 @@ TypeScript library template for Solana development using [`@solana/kit`](https:/
 - **WebSocket URL derivation** — automatic `wss://` from `https://` RPC URLs
 - **E2E tests** — real Solana RPC tests via [Surfpool](https://github.com/txtx/surfpool) + [Testcontainers](https://github.com/beeman/testcontainers)
 
-## Getting Started
+## Installation
 
 ```bash
-git clone <your-repo-url> my-project
-cd my-project
 bun install
 ```
 
-### Usage
+If you want to override the default RPC endpoint locally, copy the example env file first:
+
+```bash
+cp .env.example .env
+```
+
+## Usage
 
 ```typescript
 import { createSolanaClient, getExplorerUrl } from 'bun-library-solana-kit'
@@ -31,7 +35,7 @@ console.log(`Current slot: ${slot}`)
 const url = getExplorerUrl('tx/your-signature', 'devnet')
 ```
 
-### CLI
+## CLI
 
 ```bash
 # Check connectivity (defaults to devnet)
@@ -44,7 +48,7 @@ bun run src/cli.ts https://api.mainnet-beta.solana.com
 SOLANA_ENDPOINT=https://api.mainnet-beta.solana.com bun run src/cli.ts
 ```
 
-### Development
+## Development
 
 ```bash
 bun install
@@ -56,7 +60,7 @@ bun test           # unit tests
 bun run test:e2e   # e2e tests (requires Docker)
 ```
 
-### Testing
+## Testing
 
 Unit tests (`bun test`) run without any external dependencies.
 

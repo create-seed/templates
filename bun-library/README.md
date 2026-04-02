@@ -1,72 +1,55 @@
 # bun-library
 
-This is a template for creating a modern TypeScript library or package using [Bun](https://bun.sh/). It comes pre-configured with essential tools for development, testing, linting, and publishing.
+TypeScript library built with [Bun](https://bun.sh/), [tsdown](https://tsdown.js.org/), [Biome](https://biomejs.dev/), and [Changesets](https://github.com/changesets/changesets).
 
 ## Features
 
-*   **Bun-first development**: Leverages Bun for lightning-fast installs, runs, and tests.
-*   **TypeScript support**: Write type-safe code from the start.
-*   **Linting & Formatting**: Enforced with [Biome](https://biomejs.dev/) for consistent code style.
-*   **Bundling**: Uses [tsdown](https://tsdown.js.org/) for efficient bundling into ESM and CJS formats, with type declarations.
-*   **Testing**: Built-in unit testing with `bun test`.
-*   **Versioning & Publishing**: Managed with [Changesets](https://github.com/changesets/changesets) for streamlined releases to npm.
-*   **GitHub Actions**: Continuous Integration (CI) workflows for automated build, test, lint, and publish processes.
+- Bun-first dependency management, scripts, and tests
+- TypeScript source with dual ESM/CJS output and generated types
+- Biome for linting and formatting
+- Example library export and CLI entrypoint
+- Changesets and GitHub Actions for release automation
 
-## Getting Started
-
-To use this template, you typically would use a scaffolding tool like `bunx create-something -t bun-library`.
-
-### Installation
-
-If you're using this template directly (e.g., after cloning), you can install dependencies with Bun:
+## Installation
 
 ```bash
 bun install
 ```
 
-### Development
+## Usage
 
-*   **Build**: `bun run build`
-*   **Type Check**: `bun run check-types`
-*   **Lint**: `bun run lint`
-*   **Lint & Fix**: `bun run lint:fix`
-*   **Test**: `bun test`
-*   **Test (Watch Mode)**: `bun run test:watch`
+```ts
+import { greet } from 'bun-library'
 
-### Publishing
-
-This template uses Changesets for versioning and publishing.
-
-1.  **Add a changeset**:
-    ```bash
-    bun changeset
-    ```
-    Follow the prompts to describe your changes. This will create a markdown file in `.changeset/`.
-
-2.  **Version packages**:
-    ```bash
-    bun run version
-    ```
-    This command reads the changeset files, updates package versions, updates `CHANGELOG.md`, and deletes the used changeset files. It also runs `bun lint:fix`.
-
-3.  **Publish to npm**:
-    ```bash
-    bun run release
-    ```
-    This command builds the package and publishes it to npm. Ensure you are logged into npm (`npm login`) or have `NPM_TOKEN` configured in your CI environment.
-
-## Project Structure
-
+console.log(greet('Seed'))
 ```
-.
-├── src/             # Source code for your library
-│   └── index.ts     # Main entry point for your library
-├── test/            # Unit tests
-│   └── index.test.ts # Example test file
-├── tsdown.config.ts   # Configuration for tsdown (bundling)
-├── biome.json       # Biome linter/formatter configuration
-├── package.json     # Project metadata and scripts
-└── ... (other config files and GitHub workflows)
+
+## CLI
+
+```bash
+bun run src/cli.ts
+bun run src/cli.ts Seed
+```
+
+## Development
+
+```bash
+bun run build
+bun run check-types
+bun run lint
+bun run lint:fix
+bun test
+bun run test:watch
+```
+
+## Publishing
+
+Use Changesets to manage versioning and releases.
+
+```bash
+bun run changeset
+bun run version
+bun run release
 ```
 
 ## License

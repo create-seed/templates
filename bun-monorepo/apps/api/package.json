@@ -15,8 +15,7 @@
     "check-types": "tsc --noEmit",
     "dev": "bun --watch src/index.ts",
     "docker:build": "docker build --progress=plain -f Dockerfile -t my-app-api ../..",
-    "docker:run": "docker run --rm --name my-app-api --init --stop-signal=SIGINT -it --env-file .env -p 3000:3000 my-app-api",
-    "postinstall": "[ -f .env.example ] && [ ! -f .env ] && cp -v .env.example .env || true"
+    "docker:run": "docker run --rm --name my-app-api --init --stop-signal=SIGINT -it --env-file .env -p 3000:3000 my-app-api"
   },
   "type": "module",
   "version": "0.0.0"
