@@ -46,10 +46,10 @@ After scaffolding with `--skip-install`, running `bun install` must leave a **cl
 
 ### README Guidelines
 
+- Document features, usage, CLI (if any), and development commands
+- Do not require a `create-seed` install command in template READMEs; optimize the README for the generated project first, and only mention scaffolding when it materially improves the generated project's docs
 - The README should make sense as a **standalone project** — don't reference other templates or this repo
 - Use the template name as the heading
-- Include a `create-seed` install command: `bun x create-seed@latest my-project -t <template-name>`
-- Document features, usage, CLI (if any), and development commands
 
 ## Registry (`templates.json`)
 
