@@ -1,70 +1,70 @@
-# Monorepo Template
+# bun-monorepo
 
-A modern, high-performance monorepo template built with [Bun](https://bun.sh) and [Turbo](https://turbo.build).
+App-focused Bun monorepo with a [Hono](https://hono.dev/) API, a [React](https://react.dev/) + [Vite](https://vitejs.dev/) web app, and shared internal workspace packages.
 
 ## Features
 
-- **Package Manager**: [Bun](https://bun.sh) for fast installation and script execution
-- **Build System**: [Turbo](https://turbo.build) for high-performance build orchestration
-- **Frontend**: [React](https://react.dev) with [Vite](https://vitejs.dev)
-- **Formatting & Linting**: [Biome](https://biomejs.dev) for fast and correct code analysis
-- **Git Hooks**: [Lefthook](https://github.com/evilmartians/lefthook) for managing git hooks
-- **Type Safety**: TypeScript throughout
+- Bun workspaces with a pinned `packageManager`
+- Turbo-powered build and task orchestration
+- `apps/api` for the Bun + Hono backend
+- `apps/web` for the React + Vite frontend
+- Shared internal packages for env, i18n, shell, and UI
+- Biome, commitlint, cspell, and Lefthook for project quality checks
 
 ## Requirements
 
-- [FNM](https://github.com/Schniz/fnm) or [NVM](https://github.com/nvm-sh/nvm)
-- [Node.js](https://nodejs.org) (v20+)
-- [Bun](https://bun.sh) (v1.0+)
+- [Node.js](https://nodejs.org) 24 or newer
+- [Bun](https://bun.sh) 1.3.11 or newer
 
 ## Installation
 
 ```bash
-# Clone the repository
-git clone <your-repo-url>
-cd <your-project-name>
-
-# Install dependencies
 bun install
 ```
 
-## Usage
-
-### Development
-
-Start the development server for all apps:
+If you want local env files instead of the built-in defaults, copy the examples before starting the apps:
 
 ```bash
-bun dev
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
 ```
 
-Or filter for a specific app:
+## Development
+
+Start every workspace task:
 
 ```bash
-bun dev --filter=web
+bun run dev
 ```
 
-### Build
+Start only the API:
 
-Build all packages and apps:
+```bash
+bun run dev:api
+```
+
+Start only the web app:
+
+```bash
+bun run dev:web
+```
+
+## Quality Checks
+
+Run the full CI command:
+
+```bash
+bun run ci
+```
+
+Run individual checks:
 
 ```bash
 bun run build
-```
-
-### Code Quality
-
-Run linting and formatting checks:
-
-```bash
-# Lint
-bun lint
-
-# Fix linting issues
-bun lint:fix
-
-# Type check
-bun check-types
+bun run check-types
+bun run lint
+bun run lint:fix
+bun run spell-check
 ```
 
 ## Project Structure
@@ -81,10 +81,6 @@ bun check-types
 │   └── ui/            # Shared UI component library
 └── turbo/             # Turbo configuration and generators
 ```
-
-## Contributing
-
-Please read our [CONTRIBUTING.md](./CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests.
 
 ## License
 

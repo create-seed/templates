@@ -19,7 +19,7 @@
     "react": "catalog:",
     "react-dom": "catalog:"
   },
-  "private": false,
+  "private": true,
   "scripts": {
     "check-types": "tsc --noEmit",
     "i18n:extract": "i18next-cli extract && i18next-cli types",

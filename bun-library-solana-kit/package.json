@@ -52,7 +52,6 @@
     "ci": "bun run build && bun run lint && bun run check-types && bun run test",
     "lint": "biome check --error-on-warnings",
     "lint:fix": "biome check --error-on-warnings --write",
-    "postinstall": "[ -f .env.example ] && [ ! -f .env ] && cp -v .env.example .env || true",
     "release": "changeset publish",
     "ruler:apply": "ruler apply --local-only",
     "test": "bun test test/index.test.ts",

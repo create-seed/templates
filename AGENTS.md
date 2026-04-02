@@ -25,30 +25,34 @@ Each template lives in its own top-level directory (e.g. `bun-library/`, `bun-li
 After scaffolding with `--skip-install`, running `bun install` must leave a **clean git branch** (no modified files). This means:
 - `bun.lock` must be up to date and committed
 - `package.json` versions must be pinned (not `latest`)
-- No post-install scripts that modify tracked files
+- Install lifecycle scripts must not create or modify project files in the generated repo, including ignored files such as `.env`
 
-### Changesets
+### Template Classes
+
+Classify each template before applying file requirements:
+
+#### Library/Package Templates
 
 - Include `.changeset/README.md` and `.changeset/config.json` for the changeset workflow
 - **Do not include any actual changeset files** (e.g. `add-some-feature.md`) — those are for the template's development, not the generated project
+- Include `README.md`, `LICENSE`, `.gitignore`, `.bun-version`, `tsconfig.json`, `tsdown.config.ts`, `.github/workflows/ci.yaml`, `.github/workflows/publish.yaml`, and `.ruler/` with `AGENTS.md` and `ruler.toml`
+- Include a linting/formatting setup such as Biome, Oxlint/Oxfmt, or ESLint/Prettier
 
-### Files That Should Exist
+#### App/Monorepo Templates
 
-- `README.md` — standalone, no references to other templates or this repo
-- `LICENSE`
-- `.gitignore` (include `.env` if the template uses env vars)
-- `.bun-version`
-- `biome.json`
-- `tsconfig.json`
-- `tsdown.config.ts`
-- `.github/workflows/ci.yaml` and `publish.yaml`
-- `.ruler/` directory with `AGENTS.md` and `ruler.toml`
+- Include `README.md`, `LICENSE`, `.gitignore`, `.bun-version`, `bun.lock`, `package.json`, and `.github/workflows/ci.yaml`
+- Include a linting/formatting setup such as Biome, Oxlint/Oxfmt, or ESLint/Prettier
+- Include the workspace/build config the project actually uses (for example `turbo.json`, app/package `tsconfig.json`, Vite config, Docker files, or env examples)
+- If the template uses env vars, commit `.env.example` files and ignore `.env`
+- Do **not** add library-only assets when they do not fit the architecture; app/monorepo templates may omit `.changeset/`, `.github/workflows/publish.yaml`, `.ruler/`, root `tsconfig.json`, and root `tsdown.config.ts`
 
 ### README Guidelines
 
 - Document features, usage, CLI (if any), and development commands
 - Do not require a `create-seed` install command in template READMEs; optimize the README for the generated project first, and only mention scaffolding when it materially improves the generated project's docs
 - The README should make sense as a **standalone project** — don't reference other templates or this repo
+- Avoid "this is a template" framing in generated-project READMEs
+- Avoid scaffolding-first instructions unless they materially improve the generated project's docs
 - Use the template name as the heading
 
 ## Registry (`templates.json`)
