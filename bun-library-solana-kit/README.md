@@ -5,7 +5,7 @@ TypeScript library for Solana development using [`@solana/kit`](https://github.c
 ## Features
 
 - **Bun, TypeScript, Biome, tsdown, Changesets, GitHub Actions** — batteries included
-- **`@solana/kit` client** — `createEmptyClient().use(rpc(...))` plugin pattern
+- **`@solana/kit` client** — `createClient().use(rpc(...))` plugin pattern
 - **Explorer URL helper** — generate Solana Explorer links
 - **WebSocket URL derivation** — automatic `wss://` from `https://` RPC URLs
 - **E2E tests** — real Solana RPC tests via [Surfpool](https://github.com/txtx/surfpool) + [Testcontainers](https://github.com/beeman/testcontainers)

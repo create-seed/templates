@@ -2,15 +2,41 @@
   "bin": {
     "bun-library": "dist/cli.mjs"
   },
+  "create-seed": {
+    "instructions": [
+      "Create a GitHub repository for this project:",
+      "+gh repo create",
+      "~",
+      "Install these GitHub Apps on your new repo:",
+      "- Changeset Bot: https://github.com/apps/changeset-bot/installations/select_target",
+      "- pkg.pr.new: https://github.com/apps/pkg-pr-new/installations/select_target",
+      "~",
+      "Enable GitHub Actions to create and approve pull requests:",
+      "Open your repository settings:",
+      "+gh browse --settings",
+      "In GitHub, go to Actions -> General.",
+      "Under Workflow permissions, enable Allow GitHub Actions to create and approve pull requests.",
+      "If the checkbox is disabled, enable it in your organization Actions settings first.",
+      "~",
+      "Publish the first release manually to set up npm trusted publishing:",
+      "Set the package name in package.json first.",
+      "Build the package:",
+      "+{pm} run build",
+      "Publish it once with npm:",
+      "+npm publish --access public",
+      "Then connect the package to .github/workflows/publish.yaml in npm package settings."
+    ]
+  },
   "dependencies": {},
   "devDependencies": {
     "@biomejs/biome": "2.4.6",
-    "@changesets/cli": "^2.29.8",
-    "@intellectronica/ruler": "^0.3.34",
+    "@changesets/cli": "2.30.0",
+    "@intellectronica/ruler": "0.3.38",
     "@types/bun": "1.3.11",
-    "pkg-pr-new": "^0.0.62",
-    "publint": "^0.3.16",
-    "tsdown": "^0.20.3"
+    "pkg-pr-new": "0.0.62",
+    "publint": "0.3.18",
+    "tsdown": "0.21.7",
+    "typescript": "6.0.2"
   },
   "exports": {
     ".": {
@@ -35,9 +61,6 @@
     "type": "git",
     "url": "git+https://github.com/beeman/bun-library.git"
   },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
   "scripts": {
     "build": "tsdown",
     "changeset": "changeset",
@@ -47,8 +70,8 @@
     "lint:fix": "biome check --error-on-warnings --write",
     "release": "changeset publish",
     "ruler:apply": "ruler apply --local-only",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
+    "test": "bun test test/*.test.ts",
+    "test:watch": "bun test test/*.test.ts --watch",
     "version": "changeset version && bun lint:fix"
   },
   "type": "module",

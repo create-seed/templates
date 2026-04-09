@@ -42,16 +42,6 @@ bun test
 bun run test:watch
 ```
 
-## Publishing
-
-Use Changesets to manage versioning and releases.
-
-```bash
-bun run changeset
-bun run version
-bun run release
-```
-
 ## License
 
 MIT – see [LICENSE](./LICENSE).
