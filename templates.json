@@ -1,6 +1,18 @@
 {
   "templates": [
     {
+      "description": "Expo app template with Bun, Expo Router, HeroUI Native, and Uniwind",
+      "id": "gh:create-seed/templates/bun-expo-uniwind",
+      "instructions": [
+        "Start the iOS app:",
+        "+{pm} run ios",
+        "Start the Android app:",
+        "+{pm} run android"
+      ],
+      "name": "bun-expo-uniwind",
+      "path": "bun-expo-uniwind"
+    },
+    {
       "description": "TypeScript library with Bun, tsdown, Biome, and Changesets",
       "id": "gh:create-seed/templates/bun-library",
       "instructions": [

@@ -4,6 +4,14 @@ Project templates for create-seed.
 
 ## Available Templates
 
+### `bun-expo-uniwind`
+
+Expo app template with Bun, Expo Router, HeroUI Native, and Uniwind
+
+```bash
+bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-expo-uniwind'
+```
+
 ### `bun-library`
 
 TypeScript library with Bun, tsdown, Biome, and Changesets

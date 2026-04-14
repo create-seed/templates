@@ -37,6 +37,7 @@ After scaffolding with `--skip-install`, running `bun install` must leave a **cl
 - `bun.lock` must be up to date and committed
 - `package.json` versions must be pinned (not `latest`)
 - Install lifecycle scripts must not create or modify project files in the generated repo, including ignored files such as `.env`
+- Every generated template must expose `bun run ci` in `package.json`. The repository CI scaffolds each template and runs that command in the generated project.
 
 ### Template Classes
 
