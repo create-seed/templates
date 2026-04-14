@@ -3,12 +3,58 @@
     {
       "description": "TypeScript library with Bun, tsdown, Biome, and Changesets",
       "id": "gh:create-seed/templates/bun-library",
+      "instructions": [
+        "Create a GitHub repository for this project:",
+        "+gh repo create",
+        "~",
+        "Install these GitHub Apps on your new repo:",
+        "- Changeset Bot: https://github.com/apps/changeset-bot/installations/select_target",
+        "- pkg.pr.new: https://github.com/apps/pkg-pr-new/installations/select_target",
+        "~",
+        "Enable GitHub Actions to create and approve pull requests:",
+        "Open your repository settings:",
+        "+gh browse --settings",
+        "In GitHub, go to Actions -> General.",
+        "Under Workflow permissions, enable Allow GitHub Actions to create and approve pull requests.",
+        "If the checkbox is disabled, enable it in your organization Actions settings first.",
+        "~",
+        "Publish the first release manually to set up npm trusted publishing:",
+        "Set the package name in package.json first.",
+        "Build the package:",
+        "+{pm} run build",
+        "Publish it once with npm:",
+        "+npm publish --access public",
+        "Then connect the package to .github/workflows/publish.yaml in npm package settings."
+      ],
       "name": "bun-library",
       "path": "bun-library"
     },
     {
       "description": "TypeScript library for Solana development with @solana/kit, Surfpool e2e tests, Bun, tsdown, Biome, and Changesets",
       "id": "gh:create-seed/templates/bun-library-solana-kit",
+      "instructions": [
+        "Create a GitHub repository for this project:",
+        "+gh repo create",
+        "~",
+        "Install these GitHub Apps on your new repo:",
+        "- Changeset Bot: https://github.com/apps/changeset-bot/installations/select_target",
+        "- pkg.pr.new: https://github.com/apps/pkg-pr-new/installations/select_target",
+        "~",
+        "Enable GitHub Actions to create and approve pull requests:",
+        "Open your repository settings:",
+        "+gh browse --settings",
+        "In GitHub, go to Actions -> General.",
+        "Under Workflow permissions, enable Allow GitHub Actions to create and approve pull requests.",
+        "If the checkbox is disabled, enable it in your organization Actions settings first.",
+        "~",
+        "Publish the first release manually to set up npm trusted publishing:",
+        "Set the package name in package.json first.",
+        "Build the package:",
+        "+{pm} run build",
+        "Publish it once with npm:",
+        "+npm publish --access public",
+        "Then connect the package to .github/workflows/publish.yaml in npm package settings."
+      ],
       "name": "bun-library-solana-kit",
       "path": "bun-library-solana-kit"
     },
@@ -37,6 +83,12 @@
       ],
       "name": "bun-platform",
       "path": "bun-platform"
+    },
+    {
+      "description": "React app with Vite, TypeScript, Tailwind CSS v4, and shadcn/ui",
+      "id": "gh:create-seed/templates/bun-react-vite",
+      "name": "bun-react-vite",
+      "path": "bun-react-vite"
     }
   ]
 }
