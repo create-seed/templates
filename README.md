@@ -43,3 +43,19 @@ Bun platform template with TanStack Start, Hono, oRPC, Better Auth, Drizzle, and
 ```bash
 bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-platform'
 ```
+
+### `bun-react-vite`
+
+React app with Vite, TypeScript, Tailwind CSS v4, and shadcn/ui
+
+```bash
+bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-react-vite'
+```
+
+### `bun-react-vite-solana-kit`
+
+React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, and Solana Kit
+
+```bash
+bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-react-vite-solana-kit'
+```

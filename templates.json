@@ -101,6 +101,12 @@
       "id": "gh:create-seed/templates/bun-react-vite",
       "name": "bun-react-vite",
       "path": "bun-react-vite"
+    },
+    {
+      "description": "React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, and Solana Kit",
+      "id": "gh:create-seed/templates/bun-react-vite-solana-kit",
+      "name": "bun-react-vite-solana-kit",
+      "path": "bun-react-vite-solana-kit"
     }
   ]
 }

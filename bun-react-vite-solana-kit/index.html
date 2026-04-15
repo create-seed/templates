@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (() => {
+        const storageKey = 'theme'
+        const classList = document.documentElement.classList
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+
+        const applyTheme = (theme) => {
+          classList.remove('light', 'dark')
+          classList.add(theme)
+        }
+
+        try {
+          const storedTheme = localStorage.getItem(storageKey)
+          if (storedTheme === 'dark' || storedTheme === 'light') {
+            applyTheme(storedTheme)
+            return
+          }
+        } catch {
+          // Ignore storage access errors and fall back to system theme.
+        }
+
+        applyTheme(mediaQuery.matches ? 'dark' : 'light')
+      })()
+    </script>
+    <title>bun-react-vite-solana-kit</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
