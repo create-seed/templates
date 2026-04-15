@@ -1,5 +1,7 @@
 import js from '@eslint/js'
 import json from '@eslint/json'
+import { createTypeScriptImportResolver } from 'eslint-import-resolver-typescript'
+import { importX } from 'eslint-plugin-import-x'
 import * as eslintPluginPerfectionist from 'eslint-plugin-perfectionist'
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import reactHooks from 'eslint-plugin-react-hooks'
@@ -24,8 +26,31 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    plugins: {
+      'import-x': importX,
+    },
     rules: {
+      'import-x/extensions': [
+        'error',
+        'never',
+        {
+          checkTypeImports: true,
+          fix: true,
+          ignorePackages: true,
+          pattern: {
+            css: 'always',
+            json: 'always',
+          },
+        },
+      ],
       'react-refresh/only-export-components': 'off',
+    },
+    settings: {
+      'import-x/resolver-next': [
+        createTypeScriptImportResolver({
+          project: './tsconfig.json',
+        }),
+      ],
     },
   },
   {

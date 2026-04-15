@@ -1,15 +1,15 @@
-import { StrictMode } from 'react'
+import { lazy, StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import './index.css'
-import { AppProviders } from '@/lib/app-providers.tsx'
+import { ShellUiLoader } from '@/shell/feature'
 
-import { App } from './app.tsx'
+const App = lazy(() => import('./app'))
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AppProviders>
+    <Suspense fallback={<ShellUiLoader fullScreen />}>
       <App />
-    </AppProviders>
+    </Suspense>
   </StrictMode>,
 )

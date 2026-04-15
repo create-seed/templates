@@ -1,19 +1,17 @@
-import { lazy } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router'
 
-const ShellFeature = lazy(() => import('@/features/shell/shell-feature.tsx'))
-const ShellUiLoader = lazy(() => import('@/features/shell/ui/shell-ui-loader.tsx'))
+import { ShellFeature, ShellUiLoader } from '@/shell/feature'
 
 export const appRouter = createBrowserRouter([
   {
     children: [
       { element: <Navigate replace to="/demo" />, index: true },
       {
-        lazy: () => import('@/features/about/about-feature.tsx'),
+        lazy: () => import('@/about/feature/about-feature'),
         path: 'about',
       },
       {
-        lazy: () => import('@/features/demo/demo-feature.tsx'),
+        lazy: () => import('@/demo/feature/demo-feature'),
         path: 'demo',
       },
     ],
