@@ -49,6 +49,7 @@
     "dev:web": "bun run --cwd apps/web dev",
     "lint": "oxlint && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt --write",
+    "prepare": "lefthook install",
     "setup": "bun run ./scripts/setup.ts",
     "test": "turbo run test",
     "test:e2e": "turbo run test:e2e",

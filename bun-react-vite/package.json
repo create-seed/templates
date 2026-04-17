@@ -10,6 +10,7 @@
     "dev": "vite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepare": "lefthook install",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit"
   },
@@ -44,6 +45,7 @@
     "eslint-plugin-react-hooks": "7.0.1",
     "eslint-plugin-react-refresh": "0.5.2",
     "globals": "16.5.0",
+    "lefthook": "2.1.5",
     "prettier": "3.8.2",
     "prettier-plugin-tailwindcss": "0.7.2",
     "typescript": "5.9.3",

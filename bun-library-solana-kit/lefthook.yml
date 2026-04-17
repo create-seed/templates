@@ -1,0 +1,13 @@
+pre-commit:
+  commands:
+    biome:
+      glob: "**/*.{cjs,cts,js,json,mjs,mts,ts}"
+      run: bun x biome check --write "{staged_files}"
+      stage_fixed: true
+
+pre-push:
+  commands:
+    ci:
+      run: bun run ci
+    publint:
+      run: bun x publint
