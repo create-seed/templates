@@ -2,8 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/cor
 
 export function AboutFeature() {
   return (
-    <div className="w-full max-w-3xl">
-      <Card className="border-border/60">
+    <div className="flex min-h-full w-full items-center justify-center px-4 py-10">
+      <Card className="w-full max-w-3xl border-border/60">
         <CardHeader className="gap-2">
           <CardTitle className="text-xl font-semibold tracking-tight">About</CardTitle>
           <CardDescription className="max-w-2xl text-sm/6">
