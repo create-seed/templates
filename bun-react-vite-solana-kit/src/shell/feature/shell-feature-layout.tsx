@@ -11,8 +11,7 @@ export default function ShellFeatureLayout({
   return (
     <div className="flex h-full min-h-screen w-full flex-col">
       <ShellUiHeader links={links} />
-      {/*<main className="flex flex-1 flex-col items-center justify-center gap-2 bg-muted p-4 sm:p-6 lg:p-12 dark:bg-background">*/}
-      <main className="h-full flex-1 overflow-auto">
+      <main className="min-h-0 flex-1 overflow-auto">
         <Suspense>{children}</Suspense>
       </main>
       <ShellUiFooter />
