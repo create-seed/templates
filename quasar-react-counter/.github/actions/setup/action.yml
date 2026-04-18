@@ -1,0 +1,25 @@
+name: Setup Environment
+description: Sets up Node.js and Bun, installs dependencies, then verifies the install is clean
+
+runs:
+  using: composite
+  steps:
+    - name: Install Node.js
+      uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+      with:
+        node-version: lts/krypton
+
+    - name: Install bun
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+      with:
+        bun-version-file: .bun-version
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install
+
+    - name: Check for dirty git repo
+      shell: bash
+      run: |
+        git update-index -q --refresh
+        test -z "$(git status --porcelain --untracked-files=all)"

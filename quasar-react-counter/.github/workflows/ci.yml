@@ -1,0 +1,65 @@
+name: CI
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+
+  merge_group:
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+
+      - name: Setup Quasar
+        uses: beeman/setup-quasar@4f4895f951ce7ea257d9f5170d5119e4b136fa82 # v1.0.0
+
+      - name: Build program
+        run: bun run quasar:build
+
+      - name: Build
+        run: bun run build
+
+      - name: Run tests
+        run: bun run test
+
+  check-types:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+
+      - name: Check Types
+        run: bun run check-types
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+
+      - name: Lint
+        run: bun run lint

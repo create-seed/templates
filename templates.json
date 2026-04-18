@@ -107,6 +107,25 @@
       "id": "gh:create-seed/templates/bun-react-vite-solana-kit",
       "name": "bun-react-vite-solana-kit",
       "path": "bun-react-vite-solana-kit"
+    },
+    {
+      "description": "React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, Solana Kit, and a Quasar counter program",
+      "id": "gh:create-seed/templates/quasar-react-counter",
+      "instructions": [
+        "Make sure Quasar is installed and available on your PATH:",
+        "- https://github.com/blueshift-gg/quasar",
+        "~",
+        "Sync the generated program keys:",
+        "+bun quasar keys new",
+        "Build the program and generated client:",
+        "+bun quasar build",
+        "Deploy the program:",
+        "+bun quasar deploy",
+        "Start the web UI:",
+        "+bun dev"
+      ],
+      "name": "quasar-react-counter",
+      "path": "quasar-react-counter"
     }
   ]
 }
