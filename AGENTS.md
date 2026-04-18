@@ -39,6 +39,14 @@ After scaffolding with `--skip-install`, running `bun install` must leave a **cl
 - Install lifecycle scripts must not create or modify project files in the generated repo, including ignored files such as `.env`
 - Every generated template must expose `bun run ci` in `package.json`. The repository CI scaffolds each template and runs that command in the generated project.
 
+### CI
+
+- By default, model template CI after `bun-library`'s `.github/actions/setup/action.yml` and `.github/workflows/ci.yml` pattern.
+- Unless otherwise requested, each template should include `.github/actions/setup/action.yml` and `.github/workflows/ci.yml`.
+- Library/package templates that use `.changeset/` must also include `.github/workflows/publish.yml`.
+- Do not place local composite actions under `.github/workflows/actions`; use `.github/actions/` instead.
+- Other additional workflows are optional and should only be added when the template needs them or when explicitly requested.
+
 ### Template Classes
 
 Classify each template before applying file requirements:
@@ -47,16 +55,16 @@ Classify each template before applying file requirements:
 
 - Include `.changeset/README.md` and `.changeset/config.json` for the changeset workflow
 - **Do not include any actual changeset files** (e.g. `add-some-feature.md`) — those are for the template's development, not the generated project
-- Include `README.md`, `LICENSE`, `.gitignore`, `.bun-version`, `tsconfig.json`, `tsdown.config.ts`, `.github/workflows/ci.yaml`, `.github/workflows/publish.yaml`, and `.ruler/` with `AGENTS.md` and `ruler.toml`
+- Include `README.md`, `LICENSE`, `.gitignore`, `.bun-version`, `tsconfig.json`, `tsdown.config.ts`, and `.ruler/` with `AGENTS.md` and `ruler.toml`
 - Include a linting/formatting setup such as Biome, Oxlint/Oxfmt, or ESLint/Prettier
 
 #### App/Monorepo Templates
 
-- Include `README.md`, `LICENSE`, `.gitignore`, `.bun-version`, `bun.lock`, `package.json`, and `.github/workflows/ci.yaml`
+- Include `README.md`, `LICENSE`, `.gitignore`, `.bun-version`, `bun.lock`, and `package.json`
 - Include a linting/formatting setup such as Biome, Oxlint/Oxfmt, or ESLint/Prettier
 - Include the workspace/build config the project actually uses (for example `turbo.json`, app/package `tsconfig.json`, Vite config, Docker files, or env examples)
 - If the template uses env vars, commit `.env.example` files and ignore `.env`
-- Do **not** add library-only assets when they do not fit the architecture; app/monorepo templates may omit `.changeset/`, `.github/workflows/publish.yaml`, `.ruler/`, root `tsconfig.json`, and root `tsdown.config.ts`
+- Do **not** add library-only assets when they do not fit the architecture; app/monorepo templates may omit `.changeset/`, `.ruler/`, root `tsconfig.json`, and root `tsdown.config.ts`
 
 ### README Guidelines
 

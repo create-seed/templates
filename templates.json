@@ -36,7 +36,7 @@
         "+{pm} run build",
         "Publish it once with npm:",
         "+npm publish --access public",
-        "Then connect the package to .github/workflows/publish.yaml in npm package settings."
+        "Then connect the package to .github/workflows/publish.yml in npm package settings."
       ],
       "name": "bun-library",
       "path": "bun-library"
@@ -65,7 +65,7 @@
         "+{pm} run build",
         "Publish it once with npm:",
         "+npm publish --access public",
-        "Then connect the package to .github/workflows/publish.yaml in npm package settings."
+        "Then connect the package to .github/workflows/publish.yml in npm package settings."
       ],
       "name": "bun-library-solana-kit",
       "path": "bun-library-solana-kit"

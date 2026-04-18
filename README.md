@@ -1,4 +1,4 @@
-# Templates
+# templates
 
 Project templates for create-seed.
 

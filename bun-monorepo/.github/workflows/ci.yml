@@ -1,5 +1,9 @@
 name: CI
 
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 permissions:
   contents: read
   pull-requests: write
@@ -19,11 +23,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: install dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Build
         run: bun run build
@@ -32,10 +36,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Check Types
         run: bun check-types
@@ -44,12 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Validate current commit (last commit) with commitlint
         if: github.event_name == 'push'
@@ -63,10 +67,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Check Spelling
         run: bun spell-check
@@ -75,10 +79,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Run EditorConfig Checker
         run: bun ec
@@ -87,10 +91,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Extract and check translations
         run: |
@@ -102,10 +106,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Lint
         run: bun lint
@@ -114,10 +118,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Run syncpack
         run: bun syncpack lint
@@ -126,10 +130,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Install Dependencies
-        uses: ./.github/workflows/actions/install-dependencies
+      - name: Setup Environment
+        uses: ./.github/actions/setup
 
       - name: Test
         run: bun run test
