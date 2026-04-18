@@ -47,6 +47,17 @@ After scaffolding with `--skip-install`, running `bun install` must leave a **cl
 - Do not place local composite actions under `.github/workflows/actions`; use `.github/actions/` instead.
 - Other additional workflows are optional and should only be added when the template needs them or when explicitly requested.
 
+### Transplants and Ports
+
+- Before declaring transplant or port work complete, verify that no unapproved structural deviations were introduced and that only the intentional target-specific identifier changes remain.
+- Default to a literal transplant. Preserve the source file layout, helper boundaries, interfaces, workflow shape, inputs, and step ordering unless the user explicitly requests a different adaptation.
+- Do not deduplicate, refactor, clean up, or reuse an existing local abstraction during a transplant or port unless the user explicitly approves that deviation first. “Equivalent”, “basically the same”, or “could also work” are not valid reasons to diverge from a proven source implementation.
+- For CI/CD, automation, and build workflow files, preserve the source action shape, call pattern, and inputs. Do not swap in an existing local helper or abstraction without explicit approval.
+- If in doubt whether a change is target-facing naming consistency or implementation drift, stop and ask before editing.
+- If the source implementation appears incompatible with the target, stop and explain the exact incompatibility instead of redesigning the solution.
+- Only change what is required for the target context: app names, docs, identifiers, labels, repo-local paths, and other target-facing values that must match the target template. Do not use this as permission to rewire logic, helper boundaries, workflow structure, or step ordering.
+- Treat the source material as authoritative when a task says to transplant, port, mirror, copy, or apply changes from another repo, branch, commit, PR, or file set.
+
 ### Template Classes
 
 Classify each template before applying file requirements:
