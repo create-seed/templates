@@ -18,7 +18,7 @@ Each template lives in its own top-level directory (e.g. `bun-library/`, `bun-li
 ### Dependencies
 
 - **Never use `latest` as a version** for any dependency.
-- **Pin direct dependencies exactly.** Use exact versions for `dependencies`, `devDependencies`, and `optionalDependencies` (e.g. `1.3.9`, not `^1.3.9`).
+- **Pin direct dependencies exactly.** Use exact versions for `dependencies`, `devDependencies`, and `optionalDependencies` (e.g. `1.3.9`, not `^1.3.9`), except for Expo-managed dependencies in Expo templates, which should keep the specifier written or recommended by `expo install` / `expo install --check`.
 - **Always commit `bun.lock`** — lockfiles ensure deterministic installs and a clean git branch after `bun install`.
 - **Only use `peerDependencies` for real consumer-facing requirements.** Do not keep or add tooling-only peers just to advertise compatibility (for example `typescript` in a template library that does not require consumers to install TypeScript). When a peer is genuinely required, keep it as a compatibility range.
 
@@ -27,7 +27,7 @@ Each template lives in its own top-level directory (e.g. `bun-library/`, `bun-li
 - Treat `bun-library` as the baseline for shared library-template tooling. When shared tooling changes there, align derivative templates such as `bun-library-solana-kit` unless an upstream compatibility constraint prevents it.
 - Do not add or widen a peer unless the generated package truly depends on that host package. When a real peer exists, do not force its range ahead of upstream support; keep it aligned with the actually supported versions and note any constraint in the PR.
 - Fix required source or config changes that fall directly out of the package update in the same template. Example: deprecation-driven import renames or explicit `types` config needed after a TypeScript upgrade.
-- Prefer `bun add` or `bun update` to discover current versions, then rewrite direct dependencies to exact pins before finishing.
+- Prefer `bun add` or `bun update` to discover current versions, then rewrite direct dependencies to exact pins before finishing, except for Expo-managed dependencies in Expo templates, which should keep the specifier written or recommended by `expo install` / `expo install --check`.
 - Regenerate `bun.lock` with `bun install` after manifest changes.
 - Re-run the template's validation after package updates. For library templates, run `bun run ci` and `bun x publint`.
 
