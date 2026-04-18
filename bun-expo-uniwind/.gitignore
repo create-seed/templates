@@ -44,6 +44,7 @@ app-example
 /android
 
 # miscellaneous
-/tmp
 /.idea
+/.secrets/
 /.vscode
+/tmp

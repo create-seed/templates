@@ -1,0 +1,211 @@
+name: Android APK
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  APK_BASE_NAME: bun-expo-uniwind
+  RELEASE_TAG_PREFIX: android-dev
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Environment
+        uses: ./.github/actions/setup
+
+      - name: Validate signing secrets
+        env:
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Required repository secrets:
+          # - ANDROID_KEY_ALIAS
+          # - ANDROID_KEY_PASSWORD
+          # - ANDROID_KEYSTORE_BASE64
+          # - ANDROID_KEYSTORE_PASSWORD
+          for secret_name in \
+            ANDROID_KEY_ALIAS \
+            ANDROID_KEY_PASSWORD \
+            ANDROID_KEYSTORE_BASE64 \
+            ANDROID_KEYSTORE_PASSWORD
+          do
+            if [ -z "${!secret_name}" ]; then
+              echo "::error::Missing required secret: ${secret_name}"
+              exit 1
+            fi
+          done
+
+      - name: Prebuild Android project
+        env:
+          CI: '1'
+        run: bun x expo prebuild --clean --non-interactive --platform android
+
+      - name: Set up Android build toolchain
+        uses: ./.github/actions/setup-android
+
+      - name: Configure release signing
+        env:
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p "$HOME/.gradle"
+          touch "$HOME/.gradle/gradle.properties"
+
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
+
+          {
+            printf '\n%s\n' "APK_UPLOAD_KEY_ALIAS=$ANDROID_KEY_ALIAS"
+            printf '%s\n' "APK_UPLOAD_KEY_PASSWORD=$ANDROID_KEY_PASSWORD"
+            printf '%s\n' "APK_UPLOAD_STORE_PASSWORD=$ANDROID_KEYSTORE_PASSWORD"
+          } >> "$HOME/.gradle/gradle.properties"
+
+          chmod 600 "$HOME/.gradle/gradle.properties" android/app/release.keystore
+
+      - name: Patch Android release signing
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = 'android/app/build.gradle';
+          const debugSigningBlock = [
+            "        debug {",
+            "            storeFile file('debug.keystore')",
+            "            storePassword 'android'",
+            "            keyAlias 'androiddebugkey'",
+            "            keyPassword 'android'",
+            "        }",
+          ].join('\n');
+          const releaseSigningBlock = [
+            "        release {",
+            "            storeFile file('release.keystore')",
+            "            storePassword findProperty('APK_UPLOAD_STORE_PASSWORD')",
+            "            keyAlias findProperty('APK_UPLOAD_KEY_ALIAS')",
+            "            keyPassword findProperty('APK_UPLOAD_KEY_PASSWORD')",
+            "        }",
+          ].join('\n');
+          const releaseBuildTypeBlock = [
+            "        release {",
+            "            // Caution! In production, you need to generate your own keystore file.",
+            "            // see https://reactnative.dev/docs/signed-apk-android.",
+            "            signingConfig signingConfigs.debug",
+          ].join('\n');
+          let source = fs.readFileSync(path, 'utf8');
+
+          if (!source.includes(releaseSigningBlock)) {
+            if (!source.includes(debugSigningBlock)) {
+              throw new Error('Could not find the Android debug signing block to patch.');
+            }
+
+            source = source.replace(
+              `${debugSigningBlock}\n`,
+              `${debugSigningBlock}\n${releaseSigningBlock}\n`
+            );
+          }
+
+          if (source.includes(releaseBuildTypeBlock)) {
+            source = source.replace(
+              releaseBuildTypeBlock,
+              releaseBuildTypeBlock.replace(
+                'signingConfig signingConfigs.debug',
+                'signingConfig signingConfigs.release'
+              )
+            );
+          } else if (!source.includes('signingConfig signingConfigs.release')) {
+            throw new Error('Could not find the Android release buildType signingConfig to patch.');
+          }
+
+          fs.writeFileSync(path, source);
+          NODE
+
+      - name: Build release APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew app:assembleRelease
+
+      - name: Prepare release asset metadata
+        id: release_asset
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          RELEASE_DATE="$(date -u +%Y-%m-%d)"
+          APK_FILE_NAME="${APK_BASE_NAME}-${RELEASE_DATE}-run-${GITHUB_RUN_ID}-attempt-${GITHUB_RUN_ATTEMPT}.apk"
+          APK_FILE_PATH="${RUNNER_TEMP}/${APK_FILE_NAME}"
+          RELEASE_TAG="${RELEASE_TAG_PREFIX}-${RELEASE_DATE}"
+          RELEASE_TITLE="Android Dev ${RELEASE_DATE}"
+          RELEASE_NOTES="Development APK builds for ${RELEASE_DATE}."
+
+          cp android/app/build/outputs/apk/release/app-release.apk "$APK_FILE_PATH"
+
+          {
+            echo "apk_file_name=${APK_FILE_NAME}"
+            echo "apk_file_path=${APK_FILE_PATH}"
+            echo "release_date=${RELEASE_DATE}"
+            echo "release_notes=${RELEASE_NOTES}"
+            echo "release_tag=${RELEASE_TAG}"
+            echo "release_title=${RELEASE_TITLE}"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Ensure daily prerelease exists
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_NOTES: ${{ steps.release_asset.outputs.release_notes }}
+          RELEASE_TAG: ${{ steps.release_asset.outputs.release_tag }}
+          RELEASE_TITLE: ${{ steps.release_asset.outputs.release_title }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            exit 0
+          fi
+
+          gh release create "$RELEASE_TAG" \
+            --latest=false \
+            --notes "$RELEASE_NOTES" \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "$RELEASE_TITLE"
+
+      - name: Upload APK release asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload \
+            "${{ steps.release_asset.outputs.release_tag }}" \
+            "${{ steps.release_asset.outputs.apk_file_path }}"
+
+      - name: Summarize APK release asset
+        shell: bash
+        run: |
+          RELEASE_URL="https://github.com/${GITHUB_REPOSITORY}/releases/tag/${{ steps.release_asset.outputs.release_tag }}"
+          DOWNLOAD_URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/${{ steps.release_asset.outputs.release_tag }}/${{ steps.release_asset.outputs.apk_file_name }}"
+
+          {
+            echo "## Android APK release asset"
+            echo
+            echo "- Release: [${{ steps.release_asset.outputs.release_tag }}](${RELEASE_URL})"
+            echo "- Asset: \`${{ steps.release_asset.outputs.apk_file_name }}\`"
+            echo "- Download: ${DOWNLOAD_URL}"
+          } >> "$GITHUB_STEP_SUMMARY"
