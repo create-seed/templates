@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc -b && vite build",
     "check-types": "tsc -b --noEmit",
-    "ci": "bun run --sequential build check-types lint",
+    "ci": "bun run --sequential build quasar:build check-types lint",
     "dev": "vite",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
