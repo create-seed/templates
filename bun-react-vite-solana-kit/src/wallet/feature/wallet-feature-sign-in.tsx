@@ -4,7 +4,7 @@ import { toast } from 'sonner'
 
 import { SolanaUiAddress } from '@/solana/ui/solana-ui-address'
 import { useWalletSignIn } from '@/wallet/data-access/use-wallet-sign-in'
-import { WalletUiError } from '@/wallet/ui/wallet-ui-error'
+import { getErrorMessage, WalletUiError } from '@/wallet/ui/wallet-ui-error'
 import { WalletUiSignInForm } from '@/wallet/ui/wallet-ui-sign-in-form'
 
 export function WalletFeatureSignIn({
@@ -33,7 +33,9 @@ export function WalletFeatureSignIn({
 
             return true
           } catch (error) {
-            toast.error('Error signing in', { description: `${error}` })
+            toast.error('Error signing in', {
+              description: getErrorMessage(error, 'Unknown error occurred'),
+            })
             return false
           }
         }}

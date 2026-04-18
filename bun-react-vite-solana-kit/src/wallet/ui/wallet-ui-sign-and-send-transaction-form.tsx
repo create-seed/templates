@@ -13,16 +13,18 @@ export function WalletUiSignAndSendTransactionForm({
   onSubmit(text: string): Promise<boolean>
 }) {
   const [text, setText] = useState<string>('Hello Solana!')
+  const submitDisabled = !text.trim() || isLoading
 
   return (
     <form
       onSubmit={async (event) => {
         event.preventDefault()
-        if (!text || isLoading) {
+        const value = text.trim()
+        if (!value || isLoading) {
           return
         }
 
-        await onSubmit(text)
+        await onSubmit(value)
       }}
     >
       <Card>
@@ -38,12 +40,7 @@ export function WalletUiSignAndSendTransactionForm({
               value={text}
             />
             <InputGroupAddon align="inline-end">
-              <InputGroupButton
-                className="cursor-pointer"
-                disabled={!text || isLoading}
-                type="submit"
-                variant="outline"
-              >
+              <InputGroupButton className="cursor-pointer" disabled={submitDisabled} type="submit" variant="outline">
                 {isLoading ? <Spinner /> : <LucideKey />}
                 Sign Transaction
               </InputGroupButton>

@@ -78,11 +78,11 @@ export async function executeWalletSignTransaction({
   assertIsTransactionWithBlockhashLifetime(signedTransaction)
 
   const signature = getSignatureFromTransaction(signedTransaction)
-  await sendAndConfirmTransaction(signedTransaction, { commitment: 'confirmed' })
-
   if (!signature) {
     throw new Error('Transaction signed but no signature was returned by the wallet adapter.')
   }
+
+  await sendAndConfirmTransaction(signedTransaction, { commitment: 'confirmed' })
 
   return signature
 }

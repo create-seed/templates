@@ -62,7 +62,16 @@ function formatCluster(cluster: SolanaClusterId) {
 }
 
 function formatError(error: unknown) {
-  return error instanceof Error ? error.message : String(error)
+  if (error instanceof Error) {
+    return error.message
+  }
+  if (error && typeof error === 'object' && 'message' in error) {
+    return String(error.message)
+  }
+  if (typeof error === 'string' && error.trim().length > 0) {
+    return error
+  }
+  return 'Unknown error occurred'
 }
 
 function formatSolBalance(balance: Lamports) {
