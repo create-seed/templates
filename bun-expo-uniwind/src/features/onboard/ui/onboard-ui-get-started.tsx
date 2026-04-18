@@ -13,9 +13,7 @@ export function OnboardUiGetStarted({ errorMessage, isSubmitting, onGetStarted }
       <View className="flex-1 items-center justify-center">
         <View className="w-full gap-6 rounded-3xl border border-black/5 bg-neutral-50 p-6 dark:border-white/10 dark:bg-neutral-900">
           <View className="gap-3">
-            <Text className="text-2xl font-semibold text-neutral-950 dark:text-neutral-50">
-              Welcome to Bun Expo Uniwind
-            </Text>
+            <Text className="text-2xl font-semibold text-neutral-950 dark:text-neutral-50">Bun Expo Uniwind</Text>
             <Text className="text-base leading-6 text-neutral-600 dark:text-neutral-400">
               Start the mock app flow here. Once you continue, we will keep you on the home screen until you sign out.
             </Text>

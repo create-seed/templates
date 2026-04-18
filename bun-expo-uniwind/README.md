@@ -46,6 +46,6 @@ Expo app built with Bun, Expo Router, HeroUI Native, and Uniwind.
 
 - `src/app` contains the Expo Router entrypoints.
 - `src/features` holds feature-scoped UI, state, and data-access modules.
-- `src/lib/app-providers.tsx` wires global providers into the root layout.
+- `src/features/core/data-access/app-providers.tsx` wires global providers into the root layout.
 - `src/global.css` is the Uniwind CSS entry file.
 - `metro.config.js` connects Uniwind to Metro and generates `src/uniwind-types.d.ts`.

@@ -1,8 +1,8 @@
 import '../global.css'
 import { Stack } from 'expo-router'
 
+import { AppProviders } from '@/features/core/data-access/app-providers'
 import { useTheme } from '@/features/shell/data-access/use-theme'
-import { AppProviders } from '@/lib/app-providers'
 
 export default function RootLayout() {
   const { screenOptions } = useTheme()
