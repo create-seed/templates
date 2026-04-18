@@ -73,9 +73,6 @@
   },
   "create-seed": {
     "instructions": [
-      "Make sure Quasar is installed and available on your PATH:",
-      "- https://github.com/blueshift-gg/quasar",
-      "~",
       "Build the program and generated client:",
       "+bun quasar build",
       "Deploy the program:",
