@@ -17,6 +17,7 @@
     "quasar": "cd program && quasar",
     "quasar:deploy": "bun run quasar deploy",
     "quasar:build": "bun run quasar build",
+    "setup": "bun quasar keys new && bun run quasar:build",
     "test": "bun test"
   },
   "dependencies": {
@@ -75,14 +76,26 @@
       "Make sure Quasar is installed and available on your PATH:",
       "- https://github.com/blueshift-gg/quasar",
       "~",
-      "Sync the generated program keys:",
-      "+bun quasar keys new",
       "Build the program and generated client:",
       "+bun quasar build",
       "Deploy the program:",
       "+bun quasar deploy",
       "Start the web UI:",
       "+bun dev"
-    ]
+    ],
+    "tools": {
+      "quasar": {
+        "docsUrl": "https://quasar-lang.com/docs/getting-started/installation",
+        "minVersion": "0.0.0"
+      },
+      "rustc": {
+        "docsUrl": "https://rustup.rs",
+        "minVersion": "1.94.0"
+      },
+      "solana": {
+        "docsUrl": "https://docs.anza.xyz/cli/install",
+        "minVersion": "3.0.0"
+      }
+    }
   }
 }

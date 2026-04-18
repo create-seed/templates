@@ -115,8 +115,6 @@
         "Make sure Quasar is installed and available on your PATH:",
         "- https://github.com/blueshift-gg/quasar",
         "~",
-        "Sync the generated program keys:",
-        "+bun quasar keys new",
         "Build the program and generated client:",
         "+bun quasar build",
         "Deploy the program:",
