@@ -1,0 +1,23 @@
+[package]
+name = "escrow"
+version = "0.1.0"
+edition = "2021"
+
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(target_os, values("solana"))',
+]
+
+[lib]
+crate-type = ["cdylib"]
+
+[features]
+alloc = []
+client = []
+debug = []
+
+[dependencies]
+quasar-lang = { git = "https://github.com/blueshift-gg/quasar", rev = "a5d8c45f341e349a55f885b61fe485456c540f15" }
+quasar-spl = { git = "https://github.com/blueshift-gg/quasar", rev = "a5d8c45f341e349a55f885b61fe485456c540f15" }
+solana-instruction = { version = "3.2.0" }

@@ -124,6 +124,23 @@
       ],
       "name": "quasar-react-counter",
       "path": "quasar-react-counter"
+    },
+    {
+      "description": "React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, Solana Kit, and a Quasar escrow program",
+      "id": "gh:create-seed/templates/quasar-react-escrow",
+      "instructions": [
+        "Make sure Quasar is installed and available on your PATH:",
+        "- https://github.com/blueshift-gg/quasar",
+        "~",
+        "Build the program and generated client:",
+        "+bun quasar build",
+        "Deploy the program:",
+        "+bun quasar deploy",
+        "Start the web UI:",
+        "+bun dev"
+      ],
+      "name": "quasar-react-escrow",
+      "path": "quasar-react-escrow"
     }
   ]
 }

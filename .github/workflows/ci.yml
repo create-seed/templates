@@ -69,7 +69,7 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Setup Quasar
-        if: matrix.template == 'quasar-react-counter'
+        if: contains(fromJson('["quasar-react-counter","quasar-react-escrow"]'), matrix.template)
         uses: beeman/setup-quasar@4f4895f951ce7ea257d9f5170d5119e4b136fa82 # v1.0.0
 
       - name: Install pnpm

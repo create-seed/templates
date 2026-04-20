@@ -1,0 +1,26 @@
+[project]
+name = "escrow"
+
+[toolchain]
+type = "solana"
+
+[testing]
+language = "typescript"
+
+[testing.typescript]
+framework = "quasar-svm"
+sdk = "kit"
+
+[testing.typescript.install]
+program = "bun"
+args = ["install"]
+
+[testing.typescript.test]
+program = "bun"
+args = ["test"]
+
+[clients]
+path = "client"
+languages = [
+    "typescript",
+]
