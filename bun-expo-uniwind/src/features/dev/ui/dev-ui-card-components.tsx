@@ -1,6 +1,6 @@
 import { Button, Card } from 'heroui-native'
 
-export function DevUiComponentsCard({
+export function DevUiCardComponents({
   resetDisplayName,
   toggleAlerts,
 }: {
@@ -8,7 +8,7 @@ export function DevUiComponentsCard({
   toggleAlerts: () => void
 }) {
   return (
-    <Card>
+    <Card className="gap-3">
       <Card.Body className="gap-3">
         <Card.Title>Components in context</Card.Title>
         <Card.Description>

@@ -64,9 +64,18 @@ jobs:
               echo "No changed files found for PR; running full matrix."
             else
               RUN_ALL=false
+              declare -A IGNORED_ROOT_FILES=(
+                ["README.md"]=1
+                ["templates.json"]=1
+              )
               declare -A SELECTED_TEMPLATES=()
 
               for file in "${CHANGED_FILES[@]}"; do
+                if [[ -n "${IGNORED_ROOT_FILES[$file]:-}" ]]; then
+                  echo "Ignoring metadata-only change: $file"
+                  continue
+                fi
+
                 MATCHED=false
 
                 for template in "${ALL_TEMPLATE_PATHS[@]}"; do

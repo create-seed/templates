@@ -1,7 +1,7 @@
 import { Button, Card } from 'heroui-native'
 import { View } from 'react-native'
 
-export function DevUiToastCard({
+export function DevUiCardToast({
   showErrorToast,
   showSuccessToast,
   showWarningToast,
@@ -11,18 +11,16 @@ export function DevUiToastCard({
   showWarningToast: () => void
 }) {
   return (
-    <Card variant="secondary">
+    <Card>
       <Card.Body className="gap-3">
         <Card.Title>Toasts</Card.Title>
-        <Card.Description>Use these buttons to preview transient success and error notifications.</Card.Description>
+        <Card.Description>Use these buttons to preview transient notifications.</Card.Description>
         <View className="flex-row flex-wrap gap-2">
-          <Button className="" onPress={showSuccessToast}>
-            Success
-          </Button>
-          <Button className="" onPress={showWarningToast} variant="secondary">
+          <Button onPress={showSuccessToast}>Success</Button>
+          <Button onPress={showWarningToast} variant="secondary">
             Warning
           </Button>
-          <Button className="" onPress={showErrorToast} variant="danger">
+          <Button onPress={showErrorToast} variant="danger">
             Error
           </Button>
         </View>

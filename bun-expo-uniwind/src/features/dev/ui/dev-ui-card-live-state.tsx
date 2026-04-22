@@ -1,9 +1,9 @@
 import { Card, Chip } from 'heroui-native'
 import { View } from 'react-native'
 
-export function DevUiLiveStateCard({ alertsEnabled, displayName }: { alertsEnabled: boolean; displayName: string }) {
+export function DevUiCardLiveState({ alertsEnabled, displayName }: { alertsEnabled: boolean; displayName: string }) {
   return (
-    <Card variant="tertiary">
+    <Card>
       <Card.Body className="gap-3">
         <Card.Title>Live state</Card.Title>
         <Card.Description>{displayName}</Card.Description>
@@ -12,7 +12,7 @@ export function DevUiLiveStateCard({ alertsEnabled, displayName }: { alertsEnabl
             {displayName}
           </Chip>
           <Chip color={alertsEnabled ? 'success' : 'warning'} variant="secondary">
-            {alertsEnabled ? 'Notifications enabled' : 'Notifications disabled'}
+            {alertsEnabled ? 'Alerts on' : 'Alerts off'}
           </Chip>
         </View>
       </Card.Body>

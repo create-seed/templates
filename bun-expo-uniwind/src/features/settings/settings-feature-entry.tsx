@@ -1,17 +1,17 @@
-import { ScrollView, View } from 'react-native'
-
 import { SettingsFeatureAccount } from '@/features/settings/settings-feature-account'
-import { SettingsUiAppearanceCard } from '@/features/settings/ui/settings-ui-appearance-card'
-import { SettingsUiIntroCard } from '@/features/settings/ui/settings-ui-intro-card'
+import { SettingsUiCardAppearance } from '@/features/settings/ui/settings-ui-card-appearance'
+import { ShellUiPageHeader } from '@/features/shell/ui/shell-ui-page-header'
+import { ShellUiPage } from '@/features/shell/ui/shell-ui-page'
 
 export function SettingsFeatureEntry() {
   return (
-    <ScrollView className="flex-1 bg-background" contentInsetAdjustmentBehavior="automatic">
-      <View className="gap-6 px-6 py-8">
-        <SettingsUiIntroCard />
-        <SettingsUiAppearanceCard />
-        <SettingsFeatureAccount />
-      </View>
-    </ScrollView>
+    <ShellUiPage>
+      <ShellUiPageHeader
+        description="This generic settings is ready to add product-specific settings later."
+        title="Settings"
+      />
+      <SettingsUiCardAppearance />
+      <SettingsFeatureAccount />
+    </ShellUiPage>
   )
 }

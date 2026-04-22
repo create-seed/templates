@@ -1,17 +1,17 @@
-import { ScrollView, View } from 'react-native'
-
-import { HomeUiCustomizeCard } from '@/features/home/ui/home-ui-customize-card'
-import { HomeUiHeroCard } from '@/features/home/ui/home-ui-hero-card'
-import { HomeUiWiredInCard } from '@/features/home/ui/home-ui-wired-in-card'
+import { HomeUiCardFeatures } from '@/features/home/ui/home-ui-card-features'
+import { HomeUiCardGettingStarted } from '@/features/home/ui/home-ui-card-getting-started'
+import { ShellUiPageHeader } from '@/features/shell/ui/shell-ui-page-header'
+import { ShellUiPage } from '@/features/shell/ui/shell-ui-page'
 
 export function HomeFeatureEntry() {
   return (
-    <ScrollView className="flex-1 bg-background" contentInsetAdjustmentBehavior="automatic">
-      <View className="gap-6 px-6 py-8">
-        <HomeUiHeroCard />
-        <HomeUiWiredInCard />
-        <HomeUiCustomizeCard />
-      </View>
-    </ScrollView>
+    <ShellUiPage>
+      <ShellUiPageHeader
+        description="Expo Router, HeroUI Native, and Uniwind app that is ready to branch into a real product."
+        title="Bun Expo Uniwind"
+      />
+      <HomeUiCardFeatures />
+      <HomeUiCardGettingStarted />
+    </ShellUiPage>
   )
 }
