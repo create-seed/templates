@@ -67,3 +67,11 @@ React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, Solana Kit, and a Q
 ```bash
 bun x create-seed@latest my-app -t 'gh:create-seed/templates/quasar-react-counter'
 ```
+
+### `quasar-react-escrow`
+
+React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, Solana Kit, and a Quasar escrow program
+
+```bash
+bun x create-seed@latest my-app -t 'gh:create-seed/templates/quasar-react-escrow'
+```

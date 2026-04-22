@@ -4,6 +4,8 @@
       "description": "Expo app template with Bun, Expo Router, HeroUI Native, and Uniwind",
       "id": "gh:create-seed/templates/bun-expo-uniwind",
       "instructions": [
+        "Set up agent rules",
+        "+{pm} run setup-rules",
         "Start the iOS app:",
         "+{pm} run ios",
         "Start the Android app:",
@@ -112,9 +114,6 @@
       "description": "React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, Solana Kit, and a Quasar counter program",
       "id": "gh:create-seed/templates/quasar-react-counter",
       "instructions": [
-        "Make sure Quasar is installed and available on your PATH:",
-        "- https://github.com/blueshift-gg/quasar",
-        "~",
         "Build the program and generated client:",
         "+bun quasar build",
         "Deploy the program:",
@@ -123,15 +122,38 @@
         "+bun dev"
       ],
       "name": "quasar-react-counter",
-      "path": "quasar-react-counter"
+      "path": "quasar-react-counter",
+      "tools": {
+        "quasar": {
+          "args": [
+            "--version"
+          ],
+          "command": "quasar",
+          "docsUrl": "https://quasar-lang.com/docs/getting-started/installation",
+          "minVersion": "0.0.0"
+        },
+        "rustc": {
+          "args": [
+            "--version"
+          ],
+          "command": "rustc",
+          "docsUrl": "https://rustup.rs",
+          "minVersion": "1.94.0"
+        },
+        "solana": {
+          "args": [
+            "--version"
+          ],
+          "command": "solana",
+          "docsUrl": "https://docs.anza.xyz/cli/install",
+          "minVersion": "3.0.0"
+        }
+      }
     },
     {
       "description": "React app with Vite, TypeScript, Tailwind CSS v4, wallet-ui, Solana Kit, and a Quasar escrow program",
       "id": "gh:create-seed/templates/quasar-react-escrow",
       "instructions": [
-        "Make sure Quasar is installed and available on your PATH:",
-        "- https://github.com/blueshift-gg/quasar",
-        "~",
         "Build the program and generated client:",
         "+bun quasar build",
         "Deploy the program:",
@@ -140,7 +162,33 @@
         "+bun dev"
       ],
       "name": "quasar-react-escrow",
-      "path": "quasar-react-escrow"
+      "path": "quasar-react-escrow",
+      "tools": {
+        "quasar": {
+          "args": [
+            "--version"
+          ],
+          "command": "quasar",
+          "docsUrl": "https://quasar-lang.com/docs/getting-started/installation",
+          "minVersion": "0.0.0"
+        },
+        "rustc": {
+          "args": [
+            "--version"
+          ],
+          "command": "rustc",
+          "docsUrl": "https://rustup.rs",
+          "minVersion": "1.94.0"
+        },
+        "solana": {
+          "args": [
+            "--version"
+          ],
+          "command": "solana",
+          "docsUrl": "https://docs.anza.xyz/cli/install",
+          "minVersion": "3.0.0"
+        }
+      }
     }
   ]
 }
