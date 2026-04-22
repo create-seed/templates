@@ -46,7 +46,7 @@
     "tailwindcss": "4.2.2",
     "uniwind": "1.6.2"
   },
-  "description": "Expo app template with Bun, Expo Router, HeroUI Native, and Uniwind",
+  "description": "Expo app template with Bun, Expo Router native tabs, HeroUI Native, and Uniwind",
   "devDependencies": {
     "@intellectronica/ruler": "0.3.38",
     "@types/react": "19.2.14",

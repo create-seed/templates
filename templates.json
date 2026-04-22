@@ -1,7 +1,7 @@
 {
   "templates": [
     {
-      "description": "Expo app template with Bun, Expo Router, HeroUI Native, and Uniwind",
+      "description": "Expo app template with Bun, Expo Router native tabs, HeroUI Native, and Uniwind",
       "id": "gh:create-seed/templates/bun-expo-uniwind",
       "instructions": [
         "Set up agent rules",

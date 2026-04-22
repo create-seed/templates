@@ -6,7 +6,7 @@ Project templates for create-seed.
 
 ### `bun-expo-uniwind`
 
-Expo app template with Bun, Expo Router, HeroUI Native, and Uniwind
+Expo app template with Bun, Expo Router native tabs, HeroUI Native, and Uniwind
 
 ```bash
 bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-expo-uniwind'

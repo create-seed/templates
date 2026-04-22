@@ -4,9 +4,9 @@ Expo app built with Bun, Expo Router, HeroUI Native, and Uniwind.
 
 ## Features
 
-- Expo Router routes live in `src/app`, with app code organized by feature.
-- Uniwind powers light, dark, and system theme switching across the shell.
-- HeroUI Native components are wired into the `/dev` route for quick iteration.
+- Expo Router routes live in `src/app`, with authenticated users landing in a native tab shell.
+- Uniwind powers light, dark, and system theme switching across the shell from the Settings tab.
+- HeroUI Native components are wired into the Dev tab for quick iteration.
 - AsyncStorage-backed auth state shows one simple client-side data flow.
 - ESLint, Prettier, and strict TypeScript checks are included.
 
@@ -75,7 +75,7 @@ Each successful run uploads a direct-download APK asset to the daily `android-de
 
 ## Project Structure
 
-- `src/app` contains the Expo Router entrypoints.
+- `src/app` contains the Expo Router entrypoints, including the authenticated Home, Dev, and Settings tabs.
 - `src/features` holds feature-scoped UI, state, and data-access modules.
 - `src/features/core/data-access/app-providers.tsx` wires global providers into the root layout.
 - `src/global.css` is the Uniwind CSS entry file.
