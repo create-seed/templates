@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   validate:
@@ -27,7 +28,7 @@ jobs:
         run: |
           TAG="${{ vars.CREATE_SEED_TAG || 'latest' }}"
           echo "Using create-seed@${TAG}"
-          bun x create-seed@${TAG} registry validate
+          bun x create-seed@${TAG} registry validate --fail-on-warning
 
   setup-templates:
     name: Discover templates
@@ -44,8 +45,60 @@ jobs:
           echo "ref=$REF" >> "$GITHUB_OUTPUT"
           echo "Ref: $REF"
       - id: matrix
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          TEMPLATES=$(jq -c '[.templates[].path]' templates.json)
+          mapfile -t ALL_TEMPLATE_PATHS < <(jq -r '.templates[].path' templates.json)
+          ALL_TEMPLATES=$(printf '%s\n' "${ALL_TEMPLATE_PATHS[@]}" | jq -Rsc 'split("\n")[:-1]')
+
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            TEMPLATES="$ALL_TEMPLATES"
+            echo "Running full matrix for event: ${{ github.event_name }}"
+          else
+            mapfile -t CHANGED_FILES < <(
+              gh api --paginate "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files" --jq '.[].filename'
+            )
+
+            if [ "${#CHANGED_FILES[@]}" -eq 0 ]; then
+              TEMPLATES="$ALL_TEMPLATES"
+              echo "No changed files found for PR; running full matrix."
+            else
+              RUN_ALL=false
+              declare -A SELECTED_TEMPLATES=()
+
+              for file in "${CHANGED_FILES[@]}"; do
+                MATCHED=false
+
+                for template in "${ALL_TEMPLATE_PATHS[@]}"; do
+                  if [[ "$file" == "$template/"* ]]; then
+                    SELECTED_TEMPLATES["$template"]=1
+                    MATCHED=true
+                    break
+                  fi
+                done
+
+                if [ "$MATCHED" = false ]; then
+                  RUN_ALL=true
+                  echo "Shared change detected: $file"
+                  break
+                fi
+              done
+
+              if [ "$RUN_ALL" = true ]; then
+                TEMPLATES="$ALL_TEMPLATES"
+              else
+                TEMPLATES=$(
+                  for template in "${ALL_TEMPLATE_PATHS[@]}"; do
+                    if [[ -n "${SELECTED_TEMPLATES[$template]:-}" ]]; then
+                      printf '%s\n' "$template"
+                    fi
+                  done | jq -Rsc 'split("\n")[:-1]'
+                )
+                echo "Running changed templates only."
+              fi
+            fi
+          fi
+
           echo "templates=$TEMPLATES" >> "$GITHUB_OUTPUT"
           echo "Templates: $TEMPLATES"
 

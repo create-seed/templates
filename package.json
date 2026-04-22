@@ -9,6 +9,6 @@
   },
   "scripts": {
     "generate": "bun x create-seed@${CREATE_SEED_TAG:-latest} registry generate",
-    "validate": "bun x create-seed@${CREATE_SEED_TAG:-latest} registry validate"
+    "validate": "bun x create-seed@${CREATE_SEED_TAG:-latest} registry validate --fail-on-warning"
   }
 }
