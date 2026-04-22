@@ -106,6 +106,7 @@ The registry maps short names to template paths for `create-seed`:
 - `name` is the short name users pass to `-t` (e.g. `bun-library`)
 - `id` is the full `gh:` reference
 - `path` is the directory name in this repo
+- Never manually update template info in `templates.json` or `README.md`; regenerate and validate it with `bun run --sequential generate validate` instead.
 
 ### Validation
 
