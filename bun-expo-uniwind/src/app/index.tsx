@@ -1,5 +1,5 @@
-import { OnboardFeatureEntry } from '@/features/onboard/onboard-feature-entry'
+import { AuthFeatureSignIn } from '@/features/auth/auth-feature-sign-in'
 
 export default function Index() {
-  return <OnboardFeatureEntry />
+  return <AuthFeatureSignIn />
 }

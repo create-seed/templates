@@ -1,8 +1,9 @@
-import { Button, Card, Chip, Description, Input, Label, Switch, TextField } from 'heroui-native'
+import { Button, Card, Chip, Description, Input, Label, Switch, TextField, useToast } from 'heroui-native'
 import { useState } from 'react'
 import { ScrollView, Text, View } from 'react-native'
 
 export function HomeUiDevShowcase() {
+  const { toast } = useToast()
   const [alertsEnabled, setAlertsEnabled] = useState(true)
   const [displayName, setDisplayName] = useState('Bun Expo Uniwind')
 
@@ -84,6 +85,40 @@ export function HomeUiDevShowcase() {
               <Chip color={alertsEnabled ? 'success' : 'warning'} variant="secondary">
                 {alertsEnabled ? 'Notifications enabled' : 'Notifications disabled'}
               </Chip>
+            </View>
+          </Card.Body>
+        </Card>
+
+        <Card variant="secondary">
+          <Card.Body className="gap-3">
+            <Card.Title>Toasts</Card.Title>
+            <Card.Description>Use these buttons to preview transient success and error notifications.</Card.Description>
+            <View className="gap-3">
+              <Button
+                className="w-full"
+                onPress={() =>
+                  toast.show({
+                    description: 'The action completed successfully.',
+                    label: 'Success toast',
+                    variant: 'success',
+                  })
+                }
+              >
+                Show success toast
+              </Button>
+              <Button
+                className="w-full"
+                onPress={() =>
+                  toast.show({
+                    description: 'Something went wrong. Try again.',
+                    label: 'Error toast',
+                    variant: 'danger',
+                  })
+                }
+                variant="secondary"
+              >
+                Show error toast
+              </Button>
             </View>
           </Card.Body>
         </Card>

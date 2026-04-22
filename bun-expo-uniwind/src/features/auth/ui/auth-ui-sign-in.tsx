@@ -1,13 +1,7 @@
 import { Button } from 'heroui-native'
 import { Text, View } from 'react-native'
 
-interface OnboardUiGetStartedProps {
-  errorMessage: null | string
-  isSubmitting: boolean
-  onGetStarted: () => void
-}
-
-export function OnboardUiGetStarted({ errorMessage, isSubmitting, onGetStarted }: OnboardUiGetStartedProps) {
+export function AuthUiSignIn({ isSigningIn, onSignIn }: { isSigningIn: boolean; onSignIn: () => void }) {
   return (
     <View className="flex-1 bg-white px-6 py-10 dark:bg-neutral-950">
       <View className="flex-1 items-center justify-center">
@@ -15,14 +9,14 @@ export function OnboardUiGetStarted({ errorMessage, isSubmitting, onGetStarted }
           <View className="gap-3">
             <Text className="text-2xl font-semibold text-neutral-950 dark:text-neutral-50">Bun Expo Uniwind</Text>
             <Text className="text-base leading-6 text-neutral-600 dark:text-neutral-400">
-              Start the mock app flow here. Once you continue, we will keep you on the home screen until you sign out.
+              This starter includes a placeholder auth gate for protected routes. Replace it with your real auth flow,
+              or remove it if you do not need auth.
             </Text>
           </View>
           <View className="gap-3">
-            <Button className="w-full" onPress={onGetStarted}>
-              {isSubmitting ? 'Starting...' : 'Get started'}
+            <Button className="w-full" onPress={onSignIn}>
+              {isSigningIn ? 'Signing in...' : 'Sign in'}
             </Button>
-            {errorMessage ? <Text className="text-sm text-red-600 dark:text-red-400">{errorMessage}</Text> : null}
           </View>
         </View>
       </View>

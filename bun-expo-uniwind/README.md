@@ -7,7 +7,7 @@ Expo app built with Bun, Expo Router, HeroUI Native, and Uniwind.
 - Expo Router routes live in `src/app`, with app code organized by feature.
 - Uniwind powers light, dark, and system theme switching across the shell.
 - HeroUI Native components are wired into the `/dev` route for quick iteration.
-- AsyncStorage-backed onboarding state shows one simple client-side data flow.
+- AsyncStorage-backed auth state shows one simple client-side data flow.
 - ESLint, Prettier, and strict TypeScript checks are included.
 
 ## Getting Started
