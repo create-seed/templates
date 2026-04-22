@@ -1,0 +1,10 @@
+pre-commit:
+  commands:
+    generate-and-validate:
+      run: bun run --sequential generate validate
+      stage_fixed: true
+
+pre-push:
+  commands:
+    validate:
+      run: bun run validate

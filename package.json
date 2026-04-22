@@ -9,6 +9,10 @@
   },
   "scripts": {
     "generate": "bun x create-seed@${CREATE_SEED_TAG:-latest} registry generate",
+    "prepare": "lefthook install",
     "validate": "bun x create-seed@${CREATE_SEED_TAG:-latest} registry validate --fail-on-warning"
+  },
+  "devDependencies": {
+    "lefthook": "2.1.6"
   }
 }
