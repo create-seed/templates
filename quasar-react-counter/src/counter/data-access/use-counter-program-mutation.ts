@@ -23,8 +23,11 @@ import {
   COUNTER_ACCOUNT_DISCRIMINATOR,
   CounterAccountCodec,
   CounterClient,
+  createInitializeCounterInstruction,
+  findCounterAddress,
   PROGRAM_ADDRESS,
   PROGRAM_ERRORS,
+  SYSTEM_PROGRAM_ADDRESS,
 } from '../../../program/client'
 import { getCounterAccountQueryKey } from './use-counter-account-query'
 
@@ -128,17 +131,19 @@ async function createInstruction(
   action: CounterProgramMutation,
   owner: ReturnType<typeof useWalletUiSigner>['address'],
 ) {
+  const counter = await findCounterAddress(owner)
+
   switch (action.type) {
     case 'decrement':
-      return counterClient.createDecrementInstruction({ owner })
+      return counterClient.createDecrementInstruction({ counter, owner })
     case 'delete':
-      return counterClient.createDeleteInstruction({ owner })
+      return counterClient.createDeleteInstruction({ counter, owner })
     case 'increment':
-      return counterClient.createIncrementInstruction({ owner })
+      return counterClient.createIncrementInstruction({ counter, owner })
     case 'initialize':
-      return counterClient.createInitializeInstruction({ owner })
+      return createInitializeCounterInstruction({ counter, owner, systemProgram: SYSTEM_PROGRAM_ADDRESS })
     case 'set':
-      return counterClient.createSetInstruction({ owner, value: action.value })
+      return counterClient.createSetInstruction({ counter, owner, value: action.value })
   }
 }
 

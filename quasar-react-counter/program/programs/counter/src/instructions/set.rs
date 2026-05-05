@@ -4,18 +4,17 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct Set<'info> {
-    pub owner: &'info Signer,
+pub struct Set {
+    pub owner: Signer,
     #[account(
         mut,
-        constraint = counter.authority == *owner.address() @ MyError::Unauthorized,
-        seeds = [b"counter", owner],
-        bump = counter.bump
+        constraints(counter.authority == *owner.address()) @ MyError::Unauthorized,
+        constraints(CounterAccount::seeds(owner.address()).verify_existing(counter.address(), &crate::ID).is_ok())
     )]
-    pub counter: &'info mut Account<CounterAccount>,
+    pub counter: Account<CounterAccount>,
 }
 
-impl Set<'_> {
+impl Set {
     #[inline(always)]
     pub fn set(&mut self, value: u64) -> Result<(), ProgramError> {
         self.counter.value = value.into();

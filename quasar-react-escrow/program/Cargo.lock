@@ -18,6 +18,30 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
+name = "block-buffer"
+version = "0.10.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
+dependencies = [
+ "generic-array",
+]
+
+[[package]]
+name = "bs58"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bf88ba1141d185c399bee5288d850d63b8369520c1eafc32a0430b5b6c287bf4"
+dependencies = [
+ "tinyvec",
+]
+
+[[package]]
+name = "cfg-if"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+
+[[package]]
 name = "const-crypto"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -25,6 +49,25 @@ checksum = "1c06f1eb05f06cf2e380fdded278fbf056a38974299d77960555a311dcf91a52"
 dependencies = [
  "keccak-const",
  "sha2-const-stable",
+]
+
+[[package]]
+name = "cpufeatures"
+version = "0.2.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "crypto-common"
+version = "0.1.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
+dependencies = [
+ "generic-array",
+ "typenum",
 ]
 
 [[package]]
@@ -60,6 +103,16 @@ dependencies = [
  "darling_core",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "digest"
+version = "0.10.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
+dependencies = [
+ "block-buffer",
+ "crypto-common",
 ]
 
 [[package]]
@@ -102,10 +155,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
+name = "generic-array"
+version = "0.14.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85649ca51fd72272d7821adaf274ad91c288277713d9c18820d8499a7ff69e9a"
+dependencies = [
+ "typenum",
+ "version_check",
+]
+
+[[package]]
 name = "ident_case"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
+
+[[package]]
+name = "inventory"
+version = "0.3.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a4f0c30c76f2f4ccee3fe55a2435f691ca00c0e4bd87abe4f4a851b1d4dac39b"
+dependencies = [
+ "rustversion",
+]
 
 [[package]]
 name = "itoa"
@@ -118,6 +190,12 @@ name = "keccak-const"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57d8d8ce877200136358e0bbff3a77965875db3af755a11e1fa6b1b3e2df13ea"
+
+[[package]]
+name = "libc"
+version = "0.2.186"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "68ab91017fe16c622486840e4c83c9a37afeff978bd239b5293d61ece587de66"
 
 [[package]]
 name = "memchr"
@@ -152,9 +230,10 @@ dependencies = [
 [[package]]
 name = "quasar-derive"
 version = "0.0.0"
-source = "git+https://github.com/blueshift-gg/quasar?rev=a5d8c45f341e349a55f885b61fe485456c540f15#a5d8c45f341e349a55f885b61fe485456c540f15"
+source = "git+https://github.com/blueshift-gg/quasar?rev=096c8f7c7c37e373758da8a65b7528cb2230e20e#096c8f7c7c37e373758da8a65b7528cb2230e20e"
 dependencies = [
  "proc-macro2",
+ "quasar-idl-schema",
  "quasar-schema",
  "quote",
  "serde",
@@ -163,12 +242,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "quasar-idl-schema"
+version = "0.0.0"
+source = "git+https://github.com/blueshift-gg/quasar?rev=096c8f7c7c37e373758da8a65b7528cb2230e20e#096c8f7c7c37e373758da8a65b7528cb2230e20e"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sha2",
+]
+
+[[package]]
 name = "quasar-lang"
 version = "0.0.0"
-source = "git+https://github.com/blueshift-gg/quasar?rev=a5d8c45f341e349a55f885b61fe485456c540f15#a5d8c45f341e349a55f885b61fe485456c540f15"
+source = "git+https://github.com/blueshift-gg/quasar?rev=096c8f7c7c37e373758da8a65b7528cb2230e20e#096c8f7c7c37e373758da8a65b7528cb2230e20e"
 dependencies = [
+ "bs58",
  "const-crypto",
+ "inventory",
  "quasar-derive",
+ "quasar-idl-schema",
+ "serde_json",
  "solana-account-view",
  "solana-address",
  "solana-define-syscall 5.1.0",
@@ -183,15 +276,12 @@ dependencies = [
 [[package]]
 name = "quasar-schema"
 version = "0.0.0"
-source = "git+https://github.com/blueshift-gg/quasar?rev=a5d8c45f341e349a55f885b61fe485456c540f15#a5d8c45f341e349a55f885b61fe485456c540f15"
-dependencies = [
- "serde",
-]
+source = "git+https://github.com/blueshift-gg/quasar?rev=096c8f7c7c37e373758da8a65b7528cb2230e20e#096c8f7c7c37e373758da8a65b7528cb2230e20e"
 
 [[package]]
 name = "quasar-spl"
 version = "0.0.0"
-source = "git+https://github.com/blueshift-gg/quasar?rev=a5d8c45f341e349a55f885b61fe485456c540f15#a5d8c45f341e349a55f885b61fe485456c540f15"
+source = "git+https://github.com/blueshift-gg/quasar?rev=096c8f7c7c37e373758da8a65b7528cb2230e20e#096c8f7c7c37e373758da8a65b7528cb2230e20e"
 dependencies = [
  "quasar-lang",
  "solana-address",
@@ -236,6 +326,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 
 [[package]]
+name = "rustversion"
+version = "1.0.22"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
+
+[[package]]
 name = "serde"
 version = "1.0.228"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -276,6 +372,17 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
+]
+
+[[package]]
+name = "sha2"
+version = "0.10.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7507d819769d01a365ab707794a4084392c824f54a7a6a7862f8c3d0892b283"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest",
 ]
 
 [[package]]
@@ -433,10 +540,37 @@ dependencies = [
 ]
 
 [[package]]
+name = "tinyvec"
+version = "1.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3e61e67053d25a4e82c844e8424039d9745781b3fc4f32b8d55ed50f5f667ef3"
+dependencies = [
+ "tinyvec_macros",
+]
+
+[[package]]
+name = "tinyvec_macros"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
+
+[[package]]
+name = "typenum"
+version = "1.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "40ce102ab67701b8526c123c1bab5cbe42d7040ccfd0f64af1a385808d2f43de"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "version_check"
+version = "0.9.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "wincode"
@@ -465,8 +599,9 @@ dependencies = [
 
 [[package]]
 name = "zeropod"
-version = "0.1.0"
-source = "git+https://github.com/blueshift-gg/quasar?rev=a5d8c45f341e349a55f885b61fe485456c540f15#a5d8c45f341e349a55f885b61fe485456c540f15"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "347560ea42254b19900a39f5e7a96dc247e841b3867ac88c729a2d25e5ec498e"
 dependencies = [
  "solana-address",
  "solana-program-error",
@@ -476,8 +611,9 @@ dependencies = [
 
 [[package]]
 name = "zeropod-derive"
-version = "0.1.0"
-source = "git+https://github.com/blueshift-gg/quasar?rev=a5d8c45f341e349a55f885b61fe485456c540f15#a5d8c45f341e349a55f885b61fe485456c540f15"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b8369005ce19ec7a48b139c6535983521a9e721949ea0c9a1b56c53131749fa"
 dependencies = [
  "proc-macro2",
  "quote",

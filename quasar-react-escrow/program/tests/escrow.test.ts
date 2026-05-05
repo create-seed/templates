@@ -9,12 +9,14 @@ import { AccountRole, type Address, address, generateKeyPairSigner } from '@sola
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 
-import { EscrowClient, findEscrowAddress, PROGRAM_ADDRESS } from '../client'
+import { createMakeEscrowInstruction, EscrowClient, findEscrowAddress, PROGRAM_ADDRESS } from '../client'
 
 const client = new EscrowClient()
 const depositAmount = 1_337n
+const RENT_SYSVAR_ADDRESS = address('SysvarRent111111111111111111111111111111111')
 const receiveAmount = 733n
-const systemProgramAddress = address('11111111111111111111111111111111')
+const SYSTEM_PROGRAM_ADDRESS = address('11111111111111111111111111111111')
+const TOKEN_PROGRAM_ADDRESS = address('TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA')
 const tokenAmountCodec = getU64Codec()
 
 function createEmptyAccount(accountAddress: Address) {
@@ -91,7 +93,7 @@ function expectClosedAccount(
 ) {
   const account = result.account(accountAddress)
   expect(account).not.toBeNull()
-  expect(account!.programAddress).toBe(systemProgramAddress)
+  expect(account!.programAddress).toBe(SYSTEM_PROGRAM_ADDRESS)
   expect(BigInt(account!.lamports)).toBe(0n)
 }
 
@@ -102,6 +104,53 @@ function getEscrow(
   const escrow = result.account(escrowAddress)
   expect(escrow).not.toBeNull()
   return client.decodeEscrow(escrow!.data)
+}
+
+function getMakeInstructionInput(scenario: Awaited<ReturnType<typeof createScenario>>) {
+  return {
+    deposit: depositAmount,
+    escrow: scenario.escrowAddress,
+    maker: scenario.maker.address,
+    makerTaA: scenario.makerTaA.address,
+    makerTaB: scenario.makerTaBAddress,
+    mintA: scenario.mintA.address,
+    mintB: scenario.mintB.address,
+    receive: receiveAmount,
+    rent: RENT_SYSVAR_ADDRESS,
+    systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    tokenProgram: TOKEN_PROGRAM_ADDRESS,
+    vaultTaA: scenario.vaultTaAAddress,
+  }
+}
+
+function getRefundInstructionInput(scenario: Awaited<ReturnType<typeof createScenario>>) {
+  return {
+    escrow: scenario.escrowAddress,
+    maker: scenario.maker.address,
+    makerTaA: scenario.makerTaA.address,
+    mintA: scenario.mintA.address,
+    rent: RENT_SYSVAR_ADDRESS,
+    systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    tokenProgram: TOKEN_PROGRAM_ADDRESS,
+    vaultTaA: scenario.vaultTaAAddress,
+  }
+}
+
+function getTakeInstructionInput(scenario: Awaited<ReturnType<typeof createScenario>>) {
+  return {
+    escrow: scenario.escrowAddress,
+    maker: scenario.maker.address,
+    makerTaB: scenario.makerTaBAddress,
+    mintA: scenario.mintA.address,
+    mintB: scenario.mintB.address,
+    rent: RENT_SYSVAR_ADDRESS,
+    systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    taker: scenario.taker.address,
+    takerTaA: scenario.takerTaAAddress,
+    takerTaB: scenario.takerTaB.address,
+    tokenProgram: TOKEN_PROGRAM_ADDRESS,
+    vaultTaA: scenario.vaultTaAAddress,
+  }
 }
 
 function getTokenAmount(
@@ -135,19 +184,7 @@ describe('Escrow Program', () => {
     const scenario = await createScenario()
     const vm = await createVm()
 
-    const makeInstruction = withSignerAccounts(
-      await client.createMakeInstruction({
-        deposit: depositAmount,
-        maker: scenario.maker.address,
-        makerTaA: scenario.makerTaA.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        receive: receiveAmount,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
-      [5, 6],
-    )
+    const makeInstruction = withSignerAccounts(createMakeEscrowInstruction(getMakeInstructionInput(scenario)), [5, 6])
     const makeResult = vm.processInstruction(makeInstruction, [
       scenario.makerAccount,
       scenario.takerAccount,
@@ -165,25 +202,16 @@ describe('Escrow Program', () => {
     const escrow = getEscrow(makeResult, scenario.escrowAddress)
     expect(escrow.bump).toBeGreaterThan(0)
     expect(escrow.maker).toBe(scenario.maker.address)
-    expect(escrow.makerTaB).toBe(scenario.makerTaBAddress)
-    expect(escrow.mintA).toBe(scenario.mintA.address)
-    expect(escrow.mintB).toBe(scenario.mintB.address)
+    expect(escrow.maker_ta_b).toBe(scenario.makerTaBAddress)
+    expect(escrow.mint_a).toBe(scenario.mintA.address)
+    expect(escrow.mint_b).toBe(scenario.mintB.address)
     expect(escrow.receive).toBe(receiveAmount)
     expect(getTokenAmount(makeResult, scenario.makerTaA.address)).toBe(10_000n - depositAmount)
     expect(getTokenAmount(makeResult, scenario.makerTaBAddress)).toBe(0n)
     expect(getTokenAmount(makeResult, scenario.vaultTaAAddress)).toBe(depositAmount)
 
     const takeInstruction = withSignerAccounts(
-      await client.createTakeInstruction({
-        maker: scenario.maker.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        taker: scenario.taker.address,
-        takerTaA: scenario.takerTaAAddress,
-        takerTaB: scenario.takerTaB.address,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
+      await client.createTakeInstruction(getTakeInstructionInput(scenario)),
       [5],
     )
     const takeResult = vm.processInstruction(takeInstruction, makeResult.accounts)
@@ -200,19 +228,7 @@ describe('Escrow Program', () => {
     const scenario = await createScenario()
     const vm = await createVm()
 
-    const makeInstruction = withSignerAccounts(
-      await client.createMakeInstruction({
-        deposit: depositAmount,
-        maker: scenario.maker.address,
-        makerTaA: scenario.makerTaA.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        receive: receiveAmount,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
-      [5, 6],
-    )
+    const makeInstruction = withSignerAccounts(createMakeEscrowInstruction(getMakeInstructionInput(scenario)), [5, 6])
     const makeResult = vm.processInstruction(makeInstruction, [
       scenario.makerAccount,
       scenario.mintA,
@@ -224,12 +240,7 @@ describe('Escrow Program', () => {
     ])
     makeResult.assertSuccess()
 
-    const refundInstruction = await client.createRefundInstruction({
-      maker: scenario.maker.address,
-      makerTaA: scenario.makerTaA.address,
-      mintA: scenario.mintA.address,
-      vaultTaA: scenario.vaultTaAAddress,
-    })
+    const refundInstruction = await client.createRefundInstruction(getRefundInstructionInput(scenario))
     const refundResult = vm.processInstruction(refundInstruction, makeResult.accounts)
     refundResult.assertSuccess()
 
@@ -242,19 +253,7 @@ describe('Escrow Program', () => {
     const scenario = await createScenario()
     const vm = await createVm()
 
-    const makeInstruction = withSignerAccounts(
-      await client.createMakeInstruction({
-        deposit: depositAmount,
-        maker: scenario.maker.address,
-        makerTaA: scenario.makerTaA.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        receive: receiveAmount,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
-      [6],
-    )
+    const makeInstruction = withSignerAccounts(createMakeEscrowInstruction(getMakeInstructionInput(scenario)), [6])
     const makeResult = vm.processInstruction(makeInstruction, [
       scenario.makerAccount,
       scenario.mintA,
@@ -282,19 +281,7 @@ describe('Escrow Program', () => {
     const scenario = await createScenario()
     const vm = await createVm()
 
-    const makeInstruction = withSignerAccounts(
-      await client.createMakeInstruction({
-        deposit: depositAmount,
-        maker: scenario.maker.address,
-        makerTaA: scenario.makerTaA.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        receive: receiveAmount,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
-      [6],
-    )
+    const makeInstruction = withSignerAccounts(createMakeEscrowInstruction(getMakeInstructionInput(scenario)), [6])
     const makeResult = vm.processInstruction(makeInstruction, [
       scenario.makerAccount,
       scenario.takerAccount,
@@ -317,16 +304,7 @@ describe('Escrow Program', () => {
     ])
     makeResult.assertSuccess()
 
-    const takeInstruction = await client.createTakeInstruction({
-      maker: scenario.maker.address,
-      makerTaB: scenario.makerTaBAddress,
-      mintA: scenario.mintA.address,
-      mintB: scenario.mintB.address,
-      taker: scenario.taker.address,
-      takerTaA: scenario.takerTaAAddress,
-      takerTaB: scenario.takerTaB.address,
-      vaultTaA: scenario.vaultTaAAddress,
-    })
+    const takeInstruction = await client.createTakeInstruction(getTakeInstructionInput(scenario))
     const takeResult = vm.processInstruction(takeInstruction, makeResult.accounts)
     takeResult.assertSuccess()
 
@@ -338,19 +316,7 @@ describe('Escrow Program', () => {
     const scenario = await createScenario()
     const vm = await createVm()
 
-    const makeInstruction = withSignerAccounts(
-      await client.createMakeInstruction({
-        deposit: depositAmount,
-        maker: scenario.maker.address,
-        makerTaA: scenario.makerTaA.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        receive: receiveAmount,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
-      [6],
-    )
+    const makeInstruction = withSignerAccounts(createMakeEscrowInstruction(getMakeInstructionInput(scenario)), [6])
     const makeResult = vm.processInstruction(makeInstruction, [
       scenario.makerAccount,
       scenario.mintA,
@@ -372,19 +338,7 @@ describe('Escrow Program', () => {
     const scenario = await createScenario()
     const vm = await createVm()
 
-    const makeInstruction = withSignerAccounts(
-      await client.createMakeInstruction({
-        deposit: depositAmount,
-        maker: scenario.maker.address,
-        makerTaA: scenario.makerTaA.address,
-        makerTaB: scenario.makerTaBAddress,
-        mintA: scenario.mintA.address,
-        mintB: scenario.mintB.address,
-        receive: receiveAmount,
-        vaultTaA: scenario.vaultTaAAddress,
-      }),
-      [6],
-    )
+    const makeInstruction = withSignerAccounts(createMakeEscrowInstruction(getMakeInstructionInput(scenario)), [6])
     const makeResult = vm.processInstruction(makeInstruction, [
       scenario.makerAccount,
       scenario.mintA,

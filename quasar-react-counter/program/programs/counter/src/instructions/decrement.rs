@@ -4,18 +4,17 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct Decrement<'info> {
-    pub owner: &'info Signer,
+pub struct Decrement {
+    pub owner: Signer,
     #[account(
         mut,
-        constraint = counter.authority == *owner.address() @ MyError::Unauthorized,
-        seeds = [b"counter", owner],
-        bump = counter.bump
+        constraints(counter.authority == *owner.address()) @ MyError::Unauthorized,
+        constraints(CounterAccount::seeds(owner.address()).verify_existing(counter.address(), &crate::ID).is_ok())
     )]
-    pub counter: &'info mut Account<CounterAccount>,
+    pub counter: Account<CounterAccount>,
 }
 
-impl Decrement<'_> {
+impl Decrement {
     #[inline(always)]
     pub fn decrement(&mut self) -> Result<(), ProgramError> {
         let value = self.counter.value.checked_sub(1).ok_or(MyError::Underflow)?;

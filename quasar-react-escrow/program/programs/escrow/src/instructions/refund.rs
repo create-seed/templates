@@ -1,7 +1,7 @@
 use {
     crate::{events::RefundEvent, state::Escrow},
     quasar_lang::prelude::*,
-    quasar_spl::{Mint, Token, TokenCpi},
+    quasar_spl::prelude::*,
 };
 
 #[derive(Accounts)]
@@ -9,21 +9,20 @@ pub struct Refund {
     #[account(mut)]
     pub maker: Signer,
     #[account(
-        has_one = maker,
-        close = maker,
-        seeds = Escrow::seeds(maker),
-        bump = escrow.bump
+        mut,
+        has_one(maker),
+        constraints(Escrow::seeds(maker.address()).verify_existing(escrow.address(), &crate::ID).is_ok()),
+        close(dest = maker),
     )]
-    #[account(mut)]
     pub escrow: Account<Escrow>,
     pub mint_a: Account<Mint>,
-    #[account(mut, init_if_needed, payer = maker, token::mint = mint_a, token::authority = maker)]
+    #[account(init(idempotent), payer = maker, token(mint = mint_a, authority = maker, token_program = token_program))]
     pub maker_ta_a: Account<Token>,
     #[account(mut)]
     pub vault_ta_a: Account<Token>,
     pub rent: Sysvar<Rent>,
-    pub token_program: Program<Token>,
-    pub system_program: Program<System>,
+    pub token_program: Program<TokenProgram>,
+    pub system_program: Program<SystemProgram>,
 }
 
 impl Refund {
@@ -36,8 +35,13 @@ impl Refund {
     }
 
     #[inline(always)]
-    pub fn withdraw_tokens_and_close(&mut self, bumps: &RefundBumps) -> Result<(), ProgramError> {
-        let seeds = self.escrow_seeds(bumps);
+    pub fn withdraw_tokens_and_close(&mut self) -> Result<(), ProgramError> {
+        let bump = [self.escrow.bump];
+        let seeds = [
+            Seed::from(b"escrow" as &[u8]),
+            Seed::from(self.maker.address().as_ref()),
+            Seed::from(bump.as_ref()),
+        ];
 
         self.token_program
             .transfer(

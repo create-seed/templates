@@ -25,14 +25,16 @@ import { useState } from 'react'
 
 import type { SolanaClient } from '@/solana/data-access/solana-client'
 
-import { TOKEN_PROGRAM_ADDRESS } from '@/wallet/data-access/get-token-accounts-by-owner'
-
 import {
+  createMakeEscrowInstruction,
   ESCROW_DISCRIMINATOR,
   EscrowClient,
   EscrowCodec,
   findEscrowAddress,
   PROGRAM_ADDRESS,
+  RENT_SYSVAR_ADDRESS,
+  SYSTEM_PROGRAM_ADDRESS,
+  TOKEN_PROGRAM_ADDRESS,
 } from '../../../program/client'
 
 const escrowClient = new EscrowClient()
@@ -359,6 +361,7 @@ async function executeMakeOffer({
   const mintA = parseAddressField('Deposit mint', action.mintA)
   const mintB = parseAddressField('Requested mint', action.mintB)
   const receive = parseU64Field('Receive amount', action.receive)
+  const escrow = await findEscrowAddress(maker)
   const generatedAccounts: EscrowGeneratedAccount[] = []
   const signerSpecs: GeneratedSignerSpec[] = []
 
@@ -410,14 +413,18 @@ async function executeMakeOffer({
       : []),
   ])
 
-  let instruction = await escrowClient.createMakeInstruction({
+  let instruction = createMakeEscrowInstruction({
     deposit,
+    escrow,
     maker,
     makerTaA,
     makerTaB,
     mintA,
     mintB,
     receive,
+    rent: RENT_SYSVAR_ADDRESS,
+    systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    tokenProgram: TOKEN_PROGRAM_ADDRESS,
     vaultTaA,
   })
   instruction = addGeneratedSignerAccounts(instruction, signerSpecs)
@@ -430,14 +437,12 @@ async function executeMakeOffer({
     rentExemptionSpaces: [ESCROW_ACCOUNT_SPACE, ...signerSpecs.map(() => TOKEN_ACCOUNT_SPACE)],
     transactionSigner,
   })
-  const escrowAddress = await findEscrowAddress(maker)
-
   return {
     details: {
       generatedAccounts,
       offerPayload: {
         deposit: deposit.toString(),
-        escrow: escrowAddress,
+        escrow,
         maker,
         makerTaB,
         mintA,
@@ -468,6 +473,7 @@ async function executeRefundOffer({
   const makerTaA = parseAddressField('Refund destination token account', action.makerTaA)
   const mintA = parseAddressField('Deposit mint', action.mintA)
   const vaultTaA = parseAddressField('Escrow vault token account', action.vaultTaA)
+  const escrow = await findEscrowAddress(maker)
 
   await assertClassicTokenProgramAccounts(client, [
     {
@@ -485,9 +491,13 @@ async function executeRefundOffer({
   ])
 
   const instruction = await escrowClient.createRefundInstruction({
+    escrow,
     maker,
     makerTaA,
     mintA,
+    rent: RENT_SYSVAR_ADDRESS,
+    systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    tokenProgram: TOKEN_PROGRAM_ADDRESS,
     vaultTaA,
   })
   const signature = await executeInstruction({
@@ -523,6 +533,7 @@ async function executeTakeOffer({
   const taker = transactionSigner.address
   const takerTaB = parseAddressField('Taker payment token account', action.takerTaB)
   const vaultTaA = parseAddressField('Escrow vault token account', action.vaultTaA)
+  const escrow = await findEscrowAddress(maker)
   const generatedAccounts: EscrowGeneratedAccount[] = []
   const signerSpecs: GeneratedSignerSpec[] = []
 
@@ -567,13 +578,17 @@ async function executeTakeOffer({
   ])
 
   let instruction = await escrowClient.createTakeInstruction({
+    escrow,
     maker,
     makerTaB,
     mintA,
     mintB,
+    rent: RENT_SYSVAR_ADDRESS,
+    systemProgram: SYSTEM_PROGRAM_ADDRESS,
     taker,
     takerTaA,
     takerTaB,
+    tokenProgram: TOKEN_PROGRAM_ADDRESS,
     vaultTaA,
   })
   instruction = addGeneratedSignerAccounts(instruction, signerSpecs)

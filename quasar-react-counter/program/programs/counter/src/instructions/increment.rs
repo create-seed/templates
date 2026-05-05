@@ -4,18 +4,17 @@ use {
 };
 
 #[derive(Accounts)]
-pub struct Increment<'info> {
-    pub owner: &'info Signer,
+pub struct Increment {
+    pub owner: Signer,
     #[account(
         mut,
-        constraint = counter.authority == *owner.address() @ MyError::Unauthorized,
-        seeds = [b"counter", owner],
-        bump = counter.bump
+        constraints(counter.authority == *owner.address()) @ MyError::Unauthorized,
+        constraints(CounterAccount::seeds(owner.address()).verify_existing(counter.address(), &crate::ID).is_ok())
     )]
-    pub counter: &'info mut Account<CounterAccount>,
+    pub counter: Account<CounterAccount>,
 }
 
-impl Increment<'_> {
+impl Increment {
     #[inline(always)]
     pub fn increment(&mut self) -> Result<(), ProgramError> {
         let value = self.counter.value.checked_add(1).ok_or(MyError::Overflow)?;

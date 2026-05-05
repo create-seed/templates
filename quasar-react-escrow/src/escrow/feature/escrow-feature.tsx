@@ -221,15 +221,15 @@ function EscrowFeatureConnected({
   )
   const makeDepositTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, makeMintAInput)
   const makeReceiveTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, makeMintBInput)
-  const refundTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, lookedUpEscrow.escrow?.mintA ?? '')
+  const refundTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, lookedUpEscrow.escrow?.mint_a ?? '')
   const savedOffersForCluster = savedOffers.filter((savedOffer) => savedOffer.clusterId === cluster.id)
   const selectedDepositTokenAccount =
     classicTokenAccounts.find((tokenAccount) => tokenAccount.address === makeMakerTaAInput) ?? null
   const selectedMakerReceiveTokenAccount =
     classicTokenAccounts.find((tokenAccount) => tokenAccount.address === makeMakerTaBInput) ?? null
-  const takeReceiveTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, lookedUpEscrow.escrow?.mintA ?? '')
-  const takePaymentTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, lookedUpEscrow.escrow?.mintB ?? '')
-  const lookedUpRequestedMint = lookedUpEscrow.escrow?.mintB ?? ''
+  const takeReceiveTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, lookedUpEscrow.escrow?.mint_a ?? '')
+  const takePaymentTokenAccounts = filterTokenAccountsByMint(classicTokenAccounts, lookedUpEscrow.escrow?.mint_b ?? '')
+  const lookedUpRequestedMint = lookedUpEscrow.escrow?.mint_b ?? ''
   const requestedCirclePreset = lookedUpRequestedMint
     ? (CIRCLE_DEVNET_MINT_PRESETS.find((preset) => preset.mint === lookedUpRequestedMint) ?? null)
     : null
@@ -355,7 +355,7 @@ function EscrowFeatureConnected({
     void mutation.refundOffer({
       maker: lookupMakerAddress,
       makerTaA: refundMakerTaAInput,
-      mintA: lookedUpEscrow.escrow.mintA,
+      mintA: lookedUpEscrow.escrow.mint_a,
       vaultTaA: lookupVaultTaAInput,
     })
   }
@@ -369,9 +369,9 @@ function EscrowFeatureConnected({
 
     void mutation.takeOffer({
       maker: lookupMakerAddress,
-      makerTaB: lookedUpEscrow.escrow.makerTaB,
-      mintA: lookedUpEscrow.escrow.mintA,
-      mintB: lookedUpEscrow.escrow.mintB,
+      makerTaB: lookedUpEscrow.escrow.maker_ta_b,
+      mintA: lookedUpEscrow.escrow.mint_a,
+      mintB: lookedUpEscrow.escrow.mint_b,
       takerTaA: takeTakerTaAInput,
       takerTaB: takeTakerTaBInput,
       vaultTaA: lookupVaultTaAInput,
@@ -1228,9 +1228,9 @@ function EscrowSummary({
 }: {
   escrow: {
     maker: string
-    makerTaB: string
-    mintA: string
-    mintB: string
+    maker_ta_b: string
+    mint_a: string
+    mint_b: string
     receive: bigint
   }
   escrowAddress: null | string
@@ -1250,11 +1250,11 @@ function EscrowSummary({
       <div className="font-medium">Maker</div>
       <div className="font-mono text-muted-foreground">{escrow.maker}</div>
       <div className="font-medium">Maker receive token account</div>
-      <div className="font-mono text-muted-foreground">{escrow.makerTaB}</div>
+      <div className="font-mono text-muted-foreground">{escrow.maker_ta_b}</div>
       <div className="font-medium">Deposit mint</div>
-      <div className="font-mono text-muted-foreground">{escrow.mintA}</div>
+      <div className="font-mono text-muted-foreground">{escrow.mint_a}</div>
       <div className="font-medium">Requested mint</div>
-      <div className="font-mono text-muted-foreground">{escrow.mintB}</div>
+      <div className="font-mono text-muted-foreground">{escrow.mint_b}</div>
       <div className="font-medium">Receive amount</div>
       <div className="font-mono text-muted-foreground">{escrow.receive.toString()}</div>
     </div>

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use quasar_lang::prelude::*;
 
 #[account(discriminator = 1, set_inner)]

@@ -3,7 +3,13 @@ import { type Address, address, generateKeyPairSigner } from '@solana/kit'
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 
-import { CounterClient, findCounterAddress, PROGRAM_ADDRESS, PROGRAM_ERRORS } from '../client'
+import {
+  CounterClient,
+  createInitializeCounterInstruction,
+  findCounterAddress,
+  PROGRAM_ADDRESS,
+  PROGRAM_ERRORS,
+} from '../client'
 
 const SYSTEM_PROGRAM_ADDRESS = address('11111111111111111111111111111111')
 const client = new CounterClient()
@@ -31,7 +37,11 @@ describe('Counter Program', () => {
     const owner = await generateKeyPairSigner()
     const counterAddress = await findCounterAddress(owner.address)
 
-    const initializeInstruction = await client.createInitializeInstruction({ owner: owner.address })
+    const initializeInstruction = createInitializeCounterInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+      systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    })
     const initializeResult = vm.processInstruction(initializeInstruction, [
       createKeyedSystemAccount(owner.address),
       createKeyedSystemAccount(counterAddress, 0n),
@@ -40,19 +50,29 @@ describe('Counter Program', () => {
 
     expect(getCounterValue(initializeResult, counterAddress)).toBe(0n)
 
-    const incrementInstruction = await client.createIncrementInstruction({ owner: owner.address })
+    const incrementInstruction = await client.createIncrementInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+    })
     const incrementResult = vm.processInstruction(incrementInstruction, initializeResult.accounts)
     incrementResult.assertSuccess()
 
     expect(getCounterValue(incrementResult, counterAddress)).toBe(1n)
 
-    const setInstruction = await client.createSetInstruction({ owner: owner.address, value: 42n })
+    const setInstruction = await client.createSetInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+      value: 42n,
+    })
     const setResult = vm.processInstruction(setInstruction, incrementResult.accounts)
     setResult.assertSuccess()
 
     expect(getCounterValue(setResult, counterAddress)).toBe(42n)
 
-    const decrementInstruction = await client.createDecrementInstruction({ owner: owner.address })
+    const decrementInstruction = await client.createDecrementInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+    })
     const decrementResult = vm.processInstruction(decrementInstruction, setResult.accounts)
     decrementResult.assertSuccess()
 
@@ -63,7 +83,7 @@ describe('Counter Program', () => {
     expect(counterBeforeDelete).not.toBeNull()
     expect(ownerBeforeDelete).not.toBeNull()
 
-    const deleteInstruction = await client.createDeleteInstruction({ owner: owner.address })
+    const deleteInstruction = await client.createDeleteInstruction({ counter: counterAddress, owner: owner.address })
     const deleteResult = vm.processInstruction(deleteInstruction, decrementResult.accounts)
     deleteResult.assertSuccess()
 
@@ -83,7 +103,11 @@ describe('Counter Program', () => {
     const vm = await createVm()
     const owner = await generateKeyPairSigner()
     const counterAddress = await findCounterAddress(owner.address)
-    const initializeInstruction = await client.createInitializeInstruction({ owner: owner.address })
+    const initializeInstruction = createInitializeCounterInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+      systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    })
     const accounts = [createKeyedSystemAccount(owner.address), createKeyedSystemAccount(counterAddress, 0n)]
 
     const firstResult = vm.processInstruction(initializeInstruction, accounts)
@@ -98,14 +122,21 @@ describe('Counter Program', () => {
     const owner = await generateKeyPairSigner()
     const counterAddress = await findCounterAddress(owner.address)
 
-    const initializeInstruction = await client.createInitializeInstruction({ owner: owner.address })
+    const initializeInstruction = createInitializeCounterInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+      systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    })
     const initializeResult = vm.processInstruction(initializeInstruction, [
       createKeyedSystemAccount(owner.address),
       createKeyedSystemAccount(counterAddress, 0n),
     ])
     initializeResult.assertSuccess()
 
-    const decrementInstruction = await client.createDecrementInstruction({ owner: owner.address })
+    const decrementInstruction = await client.createDecrementInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+    })
     const decrementResult = vm.processInstruction(decrementInstruction, initializeResult.accounts)
     decrementResult.assertCustomError(1)
   })
@@ -115,7 +146,11 @@ describe('Counter Program', () => {
     const owner = await generateKeyPairSigner()
     const counterAddress = await findCounterAddress(owner.address)
 
-    const initializeInstruction = await client.createInitializeInstruction({ owner: owner.address })
+    const initializeInstruction = createInitializeCounterInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+      systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    })
     const initializeResult = vm.processInstruction(initializeInstruction, [
       createKeyedSystemAccount(owner.address),
       createKeyedSystemAccount(counterAddress, 0n),
@@ -123,13 +158,17 @@ describe('Counter Program', () => {
     initializeResult.assertSuccess()
 
     const setInstruction = await client.createSetInstruction({
+      counter: counterAddress,
       owner: owner.address,
       value: 18_446_744_073_709_551_615n,
     })
     const setResult = vm.processInstruction(setInstruction, initializeResult.accounts)
     setResult.assertSuccess()
 
-    const incrementInstruction = await client.createIncrementInstruction({ owner: owner.address })
+    const incrementInstruction = await client.createIncrementInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+    })
     const incrementResult = vm.processInstruction(incrementInstruction, setResult.accounts)
     incrementResult.assertCustomError(2)
   })
@@ -140,7 +179,12 @@ describe('Counter Program', () => {
     const attacker = await generateKeyPairSigner()
     const counterAddress = await findCounterAddress(owner.address)
 
-    const initializeInstruction = await client.createInitializeInstruction({ owner: owner.address })
+    const attackerCounterAddress = await findCounterAddress(attacker.address)
+    const initializeInstruction = createInitializeCounterInstruction({
+      counter: counterAddress,
+      owner: owner.address,
+      systemProgram: SYSTEM_PROGRAM_ADDRESS,
+    })
     const initializeResult = vm.processInstruction(initializeInstruction, [
       createKeyedSystemAccount(owner.address),
       createKeyedSystemAccount(attacker.address),
@@ -148,7 +192,11 @@ describe('Counter Program', () => {
     ])
     initializeResult.assertSuccess()
 
-    const setInstruction = await client.createSetInstruction({ owner: attacker.address, value: 7n })
+    const setInstruction = await client.createSetInstruction({
+      counter: attackerCounterAddress,
+      owner: attacker.address,
+      value: 7n,
+    })
     expect(setInstruction.accounts).toBeDefined()
     const unauthorizedSetInstruction = {
       ...setInstruction,
@@ -161,7 +209,10 @@ describe('Counter Program', () => {
     expect(PROGRAM_ERRORS[0]?.name).toBe('Unauthorized')
     expect(getCounterValue(unauthorizedSetResult, counterAddress)).toBe(0n)
 
-    const deleteInstruction = await client.createDeleteInstruction({ owner: attacker.address })
+    const deleteInstruction = await client.createDeleteInstruction({
+      counter: attackerCounterAddress,
+      owner: attacker.address,
+    })
     expect(deleteInstruction.accounts).toBeDefined()
     const unauthorizedDeleteInstruction = {
       ...deleteInstruction,
