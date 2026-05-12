@@ -1,4 +1,5 @@
-import { type Address, address, AccountRole, type Instruction, getAddressCodec } from "@solana/kit";
+import { type Address, address, AccountRole, type Instruction, getProgramDerivedAddress, getAddressCodec, type ClientWithRpc, type GetAccountInfoApi, type GetMultipleAccountsApi, type ClientWithPayer, type ClientWithTransactionPlanning, type ClientWithTransactionSending } from "@solana/kit";
+import { addSelfFetchFunctions, addSelfPlanAndSendFunctions } from "@solana/kit/program-client-core";
 import { getStructCodec, getU64Codec, getU8Codec } from "@solana/codecs";
 
 function matchDisc(data: Uint8Array, disc: Uint8Array): boolean {
@@ -12,11 +13,11 @@ function matchDisc(data: Uint8Array, disc: Uint8Array): boolean {
 /* Constants */
 export const PROGRAM_ADDRESS = address("DRcH8tvGynzEKMAxkSwGqeLHAYqxgJriEMHjypkUhxQp");
 export const ESCROW_DISCRIMINATOR = new Uint8Array([1]);
-export const REFUND_EVENT_DISCRIMINATOR = new Uint8Array([2]);
 export const TAKE_EVENT_DISCRIMINATOR = new Uint8Array([1]);
+export const REFUND_EVENT_DISCRIMINATOR = new Uint8Array([2]);
 export const MAKE_EVENT_DISCRIMINATOR = new Uint8Array([0]);
-export const REFUND_INSTRUCTION_DISCRIMINATOR = new Uint8Array([2]);
 export const TAKE_INSTRUCTION_DISCRIMINATOR = new Uint8Array([1]);
+export const REFUND_INSTRUCTION_DISCRIMINATOR = new Uint8Array([2]);
 export const MAKE_INSTRUCTION_DISCRIMINATOR = new Uint8Array([0]);
 
 /* Interfaces */
@@ -29,11 +30,11 @@ export interface Escrow {
   bump: number;
 }
 
-export interface RefundEvent {
+export interface TakeEvent {
   escrow: Address;
 }
 
-export interface TakeEvent {
+export interface RefundEvent {
   escrow: Address;
 }
 
@@ -51,17 +52,6 @@ export interface MakeInstructionArgs {
   receive: bigint;
 }
 
-export interface RefundInstructionInput {
-  maker: Address;
-  escrow: Address;
-  mintA: Address;
-  makerTaA: Address;
-  vaultTaA: Address;
-  rent: Address;
-  tokenProgram: Address;
-  systemProgram: Address;
-}
-
 export interface TakeInstructionInput {
   taker: Address;
   escrow: Address;
@@ -71,6 +61,17 @@ export interface TakeInstructionInput {
   takerTaA: Address;
   takerTaB: Address;
   makerTaB: Address;
+  vaultTaA: Address;
+  rent: Address;
+  tokenProgram: Address;
+  systemProgram: Address;
+}
+
+export interface RefundInstructionInput {
+  maker: Address;
+  escrow: Address;
+  mintA: Address;
+  makerTaA: Address;
   vaultTaA: Address;
   rent: Address;
   tokenProgram: Address;
@@ -101,11 +102,11 @@ export const EscrowCodec = getStructCodec([
   ["bump", getU8Codec()],
 ]);
 
-export const RefundEventCodec = getStructCodec([
+export const TakeEventCodec = getStructCodec([
   ["escrow", getAddressCodec()],
 ]);
 
-export const TakeEventCodec = getStructCodec([
+export const RefundEventCodec = getStructCodec([
   ["escrow", getAddressCodec()],
 ]);
 
@@ -120,8 +121,8 @@ export const MakeEventCodec = getStructCodec([
 
 /* Enums */
 export const ProgramEvent = {
-  RefundEvent: "RefundEvent",
   TakeEvent: "TakeEvent",
+  RefundEvent: "RefundEvent",
   MakeEvent: "MakeEvent",
 } as const;
 
@@ -129,13 +130,13 @@ export type ProgramEvent =
   (typeof ProgramEvent)[keyof typeof ProgramEvent];
 
 export type DecodedEvent =
-  | { type: typeof ProgramEvent.RefundEvent; data: RefundEvent }
   | { type: typeof ProgramEvent.TakeEvent; data: TakeEvent }
+  | { type: typeof ProgramEvent.RefundEvent; data: RefundEvent }
   | { type: typeof ProgramEvent.MakeEvent; data: MakeEvent };
 
 export const ProgramInstruction = {
-  Refund: "Refund",
   Take: "Take",
+  Refund: "Refund",
   Make: "Make",
 } as const;
 
@@ -143,8 +144,8 @@ export type ProgramInstruction =
   (typeof ProgramInstruction)[keyof typeof ProgramInstruction];
 
 export type DecodedInstruction =
-  | { type: typeof ProgramInstruction.Refund }
   | { type: typeof ProgramInstruction.Take }
+  | { type: typeof ProgramInstruction.Refund }
   | { type: typeof ProgramInstruction.Make; args: MakeInstructionArgs };
 
 /* Client */
@@ -156,20 +157,20 @@ export class EscrowClient {
   }
 
   decodeEvent(data: Uint8Array): DecodedEvent | null {
-    if (matchDisc(data, REFUND_EVENT_DISCRIMINATOR))
-      return { type: ProgramEvent.RefundEvent, data: RefundEventCodec.decode(data.slice(REFUND_EVENT_DISCRIMINATOR.length)) };
     if (matchDisc(data, TAKE_EVENT_DISCRIMINATOR))
       return { type: ProgramEvent.TakeEvent, data: TakeEventCodec.decode(data.slice(TAKE_EVENT_DISCRIMINATOR.length)) };
+    if (matchDisc(data, REFUND_EVENT_DISCRIMINATOR))
+      return { type: ProgramEvent.RefundEvent, data: RefundEventCodec.decode(data.slice(REFUND_EVENT_DISCRIMINATOR.length)) };
     if (matchDisc(data, MAKE_EVENT_DISCRIMINATOR))
       return { type: ProgramEvent.MakeEvent, data: MakeEventCodec.decode(data.slice(MAKE_EVENT_DISCRIMINATOR.length)) };
     return null;
   }
 
   decodeInstruction(data: Uint8Array): DecodedInstruction | null {
-    if (matchDisc(data, REFUND_INSTRUCTION_DISCRIMINATOR))
-      return { type: ProgramInstruction.Refund };
     if (matchDisc(data, TAKE_INSTRUCTION_DISCRIMINATOR))
       return { type: ProgramInstruction.Take };
+    if (matchDisc(data, REFUND_INSTRUCTION_DISCRIMINATOR))
+      return { type: ProgramInstruction.Refund };
     if (matchDisc(data, MAKE_INSTRUCTION_DISCRIMINATOR)) {
       const argsCodec = getStructCodec([
         ["deposit", getU64Codec()],
@@ -178,24 +179,6 @@ export class EscrowClient {
       return { type: ProgramInstruction.Make, args: argsCodec.decode(data.slice(MAKE_INSTRUCTION_DISCRIMINATOR.length)) };
     }
     return null;
-  }
-
-  createRefundInstruction(input: RefundInstructionInput): Instruction {
-    const data = Uint8Array.from([2]);
-    return {
-      programAddress: PROGRAM_ADDRESS,
-      accounts: [
-        { address: input.maker, role: AccountRole.WRITABLE_SIGNER },
-        { address: input.escrow, role: AccountRole.WRITABLE },
-        { address: input.mintA, role: AccountRole.READONLY },
-        { address: input.makerTaA, role: AccountRole.WRITABLE },
-        { address: input.vaultTaA, role: AccountRole.WRITABLE },
-        { address: input.rent, role: AccountRole.READONLY },
-        { address: input.tokenProgram, role: AccountRole.READONLY },
-        { address: input.systemProgram, role: AccountRole.READONLY },
-      ],
-      data,
-    };
   }
 
   createTakeInstruction(input: TakeInstructionInput): Instruction {
@@ -220,9 +203,27 @@ export class EscrowClient {
     };
   }
 
-  createMakeInstruction(input: MakeInstructionInput): Instruction {
+  createRefundInstruction(input: RefundInstructionInput): Instruction {
+    const data = Uint8Array.from([2]);
+    return {
+      programAddress: PROGRAM_ADDRESS,
+      accounts: [
+        { address: input.maker, role: AccountRole.WRITABLE_SIGNER },
+        { address: input.escrow, role: AccountRole.WRITABLE },
+        { address: input.mintA, role: AccountRole.READONLY },
+        { address: input.makerTaA, role: AccountRole.WRITABLE },
+        { address: input.vaultTaA, role: AccountRole.WRITABLE },
+        { address: input.rent, role: AccountRole.READONLY },
+        { address: input.tokenProgram, role: AccountRole.READONLY },
+        { address: input.systemProgram, role: AccountRole.READONLY },
+      ],
+      data,
+    };
+  }
+
+  async createMakeInstruction(input: MakeInstructionInput): Promise<Instruction> {
     const accountsMap: Record<string, Address> = {};
-    accountsMap["escrow"] = address("Escrow :: seeds(maker.address())");
+    accountsMap["escrow"] = await findEscrowAddress(input.maker);
     const argsCodec = getStructCodec([
       ["deposit", getU64Codec()],
       ["receive", getU64Codec()],
@@ -247,6 +248,40 @@ export class EscrowClient {
   }
 }
 
+/* Program Plugin */
+export type EscrowPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
+  ClientWithPayer &
+  ClientWithTransactionPlanning &
+  ClientWithTransactionSending;
+
+export function escrowProgram() {
+  const __client = new EscrowClient();
+  return <T extends EscrowPluginRequirements>(client: T) => ({
+    ...client,
+    escrow: {
+      accounts: {
+        escrow: addSelfFetchFunctions(client, EscrowCodec),
+      },
+      instructions: {
+        take: (input: TakeInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createTakeInstruction(input)),
+        refund: (input: RefundInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createRefundInstruction(input)),
+        make: (input: MakeInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createMakeInstruction(input)),
+      },
+    },
+  });
+}
+
+/* PDA Helpers */
+export async function findEscrowAddress(maker: Address): Promise<Address> {
+  return (await getProgramDerivedAddress({
+    programAddress: PROGRAM_ADDRESS,
+    seeds: [
+        new Uint8Array([101, 115, 99, 114, 111, 119]),
+      getAddressCodec().encode(maker),
+    ],
+  }))[0];
+}
+
 /* Errors */
 export const PROGRAM_ERRORS: Record<number, { name: string; msg?: string }> = {
   3000: { name: "AccountNotInitialized", msg: "Account data is all zeros or has no discriminator." },
@@ -265,10 +300,9 @@ export const PROGRAM_ERRORS: Record<number, { name: string; msg?: string }> = {
   3013: { name: "DynamicFieldTooLong", msg: "A dynamic-length field exceeds its maximum byte length." },
   3014: { name: "CompactWriterFieldNotSet", msg: "A compact writer commit was attempted before setting every field." },
   3015: { name: "RemainingAccountsOverflow", msg: "More remaining accounts than can fit in the buffer." },
-  3016: { name: "RemainingAccountDuplicate", msg: "A remaining account duplicated a declared or prior remaining account in strict mode." },
+  3016: { name: "RemainingAccountDuplicate", msg: "A duplicate remaining-account entry could not be resolved." },
   3017: { name: "MissingReturnData", msg: "The callee completed successfully but did not set return data." },
   3018: { name: "ReturnDataFromWrongProgram", msg: "Return data was set by a different program than the one invoked." },
   3019: { name: "InvalidReturnData", msg: "Return data bytes do not match the expected fixed-size layout." },
-  3020: { name: "AccountNotMigrated", msg: "Migration<From, To> field exited without .migrate() being called." },
 };
 

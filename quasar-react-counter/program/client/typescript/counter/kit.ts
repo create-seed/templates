@@ -1,4 +1,5 @@
-import { type Address, address, AccountRole, type Instruction, getAddressCodec } from "@solana/kit";
+import { type Address, address, AccountRole, type Instruction, getProgramDerivedAddress, getAddressCodec, type ClientWithRpc, type GetAccountInfoApi, type GetMultipleAccountsApi, type ClientWithPayer, type ClientWithTransactionPlanning, type ClientWithTransactionSending } from "@solana/kit";
+import { addSelfFetchFunctions, addSelfPlanAndSendFunctions } from "@solana/kit/program-client-core";
 import { getStructCodec, getU64Codec, getU8Codec } from "@solana/codecs";
 
 function matchDisc(data: Uint8Array, disc: Uint8Array): boolean {
@@ -12,10 +13,10 @@ function matchDisc(data: Uint8Array, disc: Uint8Array): boolean {
 /* Constants */
 export const PROGRAM_ADDRESS = address("GATuS4JvmdJ2ungXgAfmR4ZHFrPt1uZyUBfxicm7M2F1");
 export const COUNTER_ACCOUNT_DISCRIMINATOR = new Uint8Array([1]);
-export const DECREMENT_INSTRUCTION_DISCRIMINATOR = new Uint8Array([2]);
-export const SET_INSTRUCTION_DISCRIMINATOR = new Uint8Array([3]);
-export const INCREMENT_INSTRUCTION_DISCRIMINATOR = new Uint8Array([1]);
 export const DELETE_INSTRUCTION_DISCRIMINATOR = new Uint8Array([4]);
+export const SET_INSTRUCTION_DISCRIMINATOR = new Uint8Array([3]);
+export const DECREMENT_INSTRUCTION_DISCRIMINATOR = new Uint8Array([2]);
+export const INCREMENT_INSTRUCTION_DISCRIMINATOR = new Uint8Array([1]);
 export const INITIALIZE_INSTRUCTION_DISCRIMINATOR = new Uint8Array([0]);
 
 /* Interfaces */
@@ -29,7 +30,7 @@ export interface SetInstructionArgs {
   value: bigint;
 }
 
-export interface DecrementInstructionInput {
+export interface DeleteInstructionInput {
   owner: Address;
   counter: Address;
 }
@@ -40,12 +41,12 @@ export interface SetInstructionInput {
   value: bigint;
 }
 
-export interface IncrementInstructionInput {
+export interface DecrementInstructionInput {
   owner: Address;
   counter: Address;
 }
 
-export interface DeleteInstructionInput {
+export interface IncrementInstructionInput {
   owner: Address;
   counter: Address;
 }
@@ -64,10 +65,10 @@ export const CounterAccountCodec = getStructCodec([
 
 /* Enums */
 export const ProgramInstruction = {
-  Decrement: "Decrement",
-  Set: "Set",
-  Increment: "Increment",
   Delete: "Delete",
+  Set: "Set",
+  Decrement: "Decrement",
+  Increment: "Increment",
   Initialize: "Initialize",
 } as const;
 
@@ -75,10 +76,10 @@ export type ProgramInstruction =
   (typeof ProgramInstruction)[keyof typeof ProgramInstruction];
 
 export type DecodedInstruction =
-  | { type: typeof ProgramInstruction.Decrement }
-  | { type: typeof ProgramInstruction.Set; args: SetInstructionArgs }
-  | { type: typeof ProgramInstruction.Increment }
   | { type: typeof ProgramInstruction.Delete }
+  | { type: typeof ProgramInstruction.Set; args: SetInstructionArgs }
+  | { type: typeof ProgramInstruction.Decrement }
+  | { type: typeof ProgramInstruction.Increment }
   | { type: typeof ProgramInstruction.Initialize };
 
 /* Client */
@@ -90,29 +91,29 @@ export class CounterClient {
   }
 
   decodeInstruction(data: Uint8Array): DecodedInstruction | null {
-    if (matchDisc(data, DECREMENT_INSTRUCTION_DISCRIMINATOR))
-      return { type: ProgramInstruction.Decrement };
+    if (matchDisc(data, DELETE_INSTRUCTION_DISCRIMINATOR))
+      return { type: ProgramInstruction.Delete };
     if (matchDisc(data, SET_INSTRUCTION_DISCRIMINATOR)) {
       const argsCodec = getStructCodec([
         ["value", getU64Codec()],
       ]);
       return { type: ProgramInstruction.Set, args: argsCodec.decode(data.slice(SET_INSTRUCTION_DISCRIMINATOR.length)) };
     }
+    if (matchDisc(data, DECREMENT_INSTRUCTION_DISCRIMINATOR))
+      return { type: ProgramInstruction.Decrement };
     if (matchDisc(data, INCREMENT_INSTRUCTION_DISCRIMINATOR))
       return { type: ProgramInstruction.Increment };
-    if (matchDisc(data, DELETE_INSTRUCTION_DISCRIMINATOR))
-      return { type: ProgramInstruction.Delete };
     if (matchDisc(data, INITIALIZE_INSTRUCTION_DISCRIMINATOR))
       return { type: ProgramInstruction.Initialize };
     return null;
   }
 
-  createDecrementInstruction(input: DecrementInstructionInput): Instruction {
-    const data = Uint8Array.from([2]);
+  createDeleteInstruction(input: DeleteInstructionInput): Instruction {
+    const data = Uint8Array.from([4]);
     return {
       programAddress: PROGRAM_ADDRESS,
       accounts: [
-        { address: input.owner, role: AccountRole.READONLY_SIGNER },
+        { address: input.owner, role: AccountRole.WRITABLE_SIGNER },
         { address: input.counter, role: AccountRole.WRITABLE },
       ],
       data,
@@ -124,6 +125,18 @@ export class CounterClient {
       ["value", getU64Codec()],
     ]);
     const data = Uint8Array.from([3, ...argsCodec.encode({ value: input.value })]);
+    return {
+      programAddress: PROGRAM_ADDRESS,
+      accounts: [
+        { address: input.owner, role: AccountRole.READONLY_SIGNER },
+        { address: input.counter, role: AccountRole.WRITABLE },
+      ],
+      data,
+    };
+  }
+
+  createDecrementInstruction(input: DecrementInstructionInput): Instruction {
+    const data = Uint8Array.from([2]);
     return {
       programAddress: PROGRAM_ADDRESS,
       accounts: [
@@ -146,21 +159,9 @@ export class CounterClient {
     };
   }
 
-  createDeleteInstruction(input: DeleteInstructionInput): Instruction {
-    const data = Uint8Array.from([4]);
-    return {
-      programAddress: PROGRAM_ADDRESS,
-      accounts: [
-        { address: input.owner, role: AccountRole.WRITABLE_SIGNER },
-        { address: input.counter, role: AccountRole.WRITABLE },
-      ],
-      data,
-    };
-  }
-
-  createInitializeInstruction(input: InitializeInstructionInput): Instruction {
+  async createInitializeInstruction(input: InitializeInstructionInput): Promise<Instruction> {
     const accountsMap: Record<string, Address> = {};
-    accountsMap["counter"] = address("CounterAccount :: seeds(owner.address())");
+    accountsMap["counter"] = await findCounterAddress(input.owner);
     const data = Uint8Array.from([0]);
     return {
       programAddress: PROGRAM_ADDRESS,
@@ -172,6 +173,42 @@ export class CounterClient {
       data,
     };
   }
+}
+
+/* Program Plugin */
+export type CounterPluginRequirements = ClientWithRpc<GetAccountInfoApi & GetMultipleAccountsApi> &
+  ClientWithPayer &
+  ClientWithTransactionPlanning &
+  ClientWithTransactionSending;
+
+export function counterProgram() {
+  const __client = new CounterClient();
+  return <T extends CounterPluginRequirements>(client: T) => ({
+    ...client,
+    counter: {
+      accounts: {
+        counterAccount: addSelfFetchFunctions(client, CounterAccountCodec),
+      },
+      instructions: {
+        delete: (input: DeleteInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createDeleteInstruction(input)),
+        set: (input: SetInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createSetInstruction(input)),
+        decrement: (input: DecrementInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createDecrementInstruction(input)),
+        increment: (input: IncrementInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createIncrementInstruction(input)),
+        initialize: (input: InitializeInstructionInput) => addSelfPlanAndSendFunctions(client, __client.createInitializeInstruction(input)),
+      },
+    },
+  });
+}
+
+/* PDA Helpers */
+export async function findCounterAddress(owner: Address): Promise<Address> {
+  return (await getProgramDerivedAddress({
+    programAddress: PROGRAM_ADDRESS,
+    seeds: [
+        new Uint8Array([99, 111, 117, 110, 116, 101, 114]),
+      getAddressCodec().encode(owner),
+    ],
+  }))[0];
 }
 
 /* Errors */
@@ -192,11 +229,10 @@ export const PROGRAM_ERRORS: Record<number, { name: string; msg?: string }> = {
   3013: { name: "DynamicFieldTooLong", msg: "A dynamic-length field exceeds its maximum byte length." },
   3014: { name: "CompactWriterFieldNotSet", msg: "A compact writer commit was attempted before setting every field." },
   3015: { name: "RemainingAccountsOverflow", msg: "More remaining accounts than can fit in the buffer." },
-  3016: { name: "RemainingAccountDuplicate", msg: "A remaining account duplicated a declared or prior remaining account in strict mode." },
+  3016: { name: "RemainingAccountDuplicate", msg: "A duplicate remaining-account entry could not be resolved." },
   3017: { name: "MissingReturnData", msg: "The callee completed successfully but did not set return data." },
   3018: { name: "ReturnDataFromWrongProgram", msg: "Return data was set by a different program than the one invoked." },
   3019: { name: "InvalidReturnData", msg: "Return data bytes do not match the expected fixed-size layout." },
-  3020: { name: "AccountNotMigrated", msg: "Migration<From, To> field exited without .migrate() being called." },
   0: { name: "Unauthorized" },
   1: { name: "Underflow" },
   2: { name: "Overflow" },

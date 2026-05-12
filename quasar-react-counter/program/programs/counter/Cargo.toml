@@ -19,5 +19,5 @@ debug = []
 idl-build = ["quasar-lang/idl-build"]
 
 [dependencies]
-quasar-lang = { git = "https://github.com/blueshift-gg/quasar", rev = "096c8f7c7c37e373758da8a65b7528cb2230e20e" }
+quasar-lang = { git = "https://github.com/blueshift-gg/quasar", rev = "81958ae82eaf7fb512d17cf40fec19873534e8f3" }
 solana-instruction = { version = "3.2.0" }
