@@ -29,7 +29,7 @@ jobs:
         uses: ./.github/actions/setup
 
       - name: Setup Quasar
-        uses: beeman/setup-quasar@4f4895f951ce7ea257d9f5170d5119e4b136fa82 # v1.0.0
+        uses: beeman/setup-quasar@d793579509f8bc9a6f45ba22837fe2c64f8bb361 # v1.0.1
 
       - name: Build program
         run: bun run quasar:build
