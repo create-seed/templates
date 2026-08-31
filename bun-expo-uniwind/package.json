@@ -61,7 +61,7 @@
   },
   "main": "expo-router/entry",
   "name": "bun-expo-uniwind",
-  "packageManager": "bun@1.3.13",
+  "packageManager": "bun@1.4.0",
   "private": true,
   "scripts": {
     "android": "expo start --android",
