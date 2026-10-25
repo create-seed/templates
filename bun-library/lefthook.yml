@@ -1,8 +1,19 @@
 pre-commit:
   commands:
-    biome:
-      glob: "**/*.{cjs,cts,js,json,mjs,mts,ts}"
-      run: bun x biome check --write "{staged_files}"
+    format:
+      exclude: '(^|/)package\.json$'
+      glob:
+        - '**/*.{cjs,cts,js,json,jsx,mjs,mts,ts,tsx}'
+        - '*.{cjs,cts,js,json,jsx,mjs,mts,ts,tsx}'
+      priority: 2
+      run: bun x oxfmt --write {staged_files}
+      stage_fixed: true
+    lint:
+      glob:
+        - '**/*.{cjs,cts,js,jsx,mjs,mts,ts,tsx}'
+        - '*.{cjs,cts,js,jsx,mjs,mts,ts,tsx}'
+      priority: 1
+      run: bun x oxlint --deny-warnings --fix {staged_files}
       stage_fixed: true
 
 pre-push:

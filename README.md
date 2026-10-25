@@ -14,7 +14,7 @@ bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-expo-uniwind'
 
 ### `bun-library`
 
-TypeScript library with Bun, tsdown, Biome, and Changesets
+TypeScript library with Bun, tsdown, Oxlint, Oxfmt, and Changesets
 
 ```bash
 bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-library'

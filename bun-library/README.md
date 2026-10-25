@@ -1,14 +1,14 @@
 # bun-library
 
-TypeScript library built with [Bun](https://bun.sh/), [tsdown](https://tsdown.js.org/), [Biome](https://biomejs.dev/), and [Changesets](https://github.com/changesets/changesets).
+TypeScript library built with [Bun](https://bun.sh/), [tsdown](https://tsdown.js.org/), [Oxlint](https://oxc.rs/docs/guide/usage/linter), [Oxfmt](https://oxc.rs/docs/guide/usage/formatter), and [Changesets](https://github.com/changesets/changesets).
 
 ## Features
 
 - Bun-first dependency management, scripts, and tests
-- TypeScript source with dual ESM/CJS output and generated types
-- Biome for linting and formatting
-- Example library export and CLI entrypoint
 - Changesets and GitHub Actions for release automation
+- Example library export and CLI entrypoint
+- Oxlint and Oxfmt for linting and formatting, with Perfectionist sorting rules
+- TypeScript source with dual ESM/CJS output and generated types
 
 ## Installation
 
@@ -41,6 +41,10 @@ bun run lint:fix
 bun test
 bun run test:watch
 ```
+
+`lint` checks lint rules and formatting; `lint:fix` applies fixes and formats files. Both fail on lint warnings.
+Perfectionist sorts interface members, JSX props, object keys, and object types alphabetically; Oxfmt sorts imports.
+Arbitrary JSON keys are not automatically sorted, and `package.json` keeps its existing formatting.
 
 ## License
 
