@@ -44,7 +44,7 @@ bun run test:watch
 
 `lint` checks lint rules and formatting; `lint:fix` applies fixes and formats files. Both fail on lint warnings.
 Perfectionist sorts interface members, JSX props, object keys, and object types alphabetically; Oxfmt sorts imports.
-Arbitrary JSON keys are not automatically sorted, and `package.json` keeps its existing formatting.
+Arbitrary JSON keys are not automatically sorted. `package.json` is formatted without reordering its keys.
 
 ## License
 
