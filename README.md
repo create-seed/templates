@@ -22,7 +22,7 @@ bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-library'
 
 ### `bun-library-solana-kit`
 
-TypeScript library for Solana development with @solana/kit, Surfpool e2e tests, Bun, tsdown, Biome, and Changesets
+TypeScript library for Solana development with @solana/kit, Surfpool e2e tests, Bun, tsdown, Oxlint, Oxfmt, and Changesets
 
 ```bash
 bun x create-seed@latest my-app -t 'gh:create-seed/templates/bun-library-solana-kit'

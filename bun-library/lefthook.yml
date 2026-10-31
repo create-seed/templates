@@ -1,7 +1,6 @@
 pre-commit:
   commands:
     format:
-      exclude: '(^|/)package\.json$'
       glob:
         - '**/*.{cjs,cts,js,json,jsx,mjs,mts,ts,tsx}'
         - '*.{cjs,cts,js,json,jsx,mjs,mts,ts,tsx}'

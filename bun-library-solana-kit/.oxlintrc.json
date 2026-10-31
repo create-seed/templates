@@ -1,0 +1,13 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["eslint-plugin-perfectionist"],
+  "plugins": ["import", "oxc", "react", "typescript", "unicorn"],
+  "rules": {
+    "no-else-return": "error",
+    "perfectionist/sort-interfaces": "error",
+    "perfectionist/sort-jsx-props": "error",
+    "perfectionist/sort-object-types": "error",
+    "perfectionist/sort-objects": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  }
+}
