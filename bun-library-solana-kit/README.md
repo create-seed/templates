@@ -4,11 +4,11 @@ TypeScript library for Solana development using [`@solana/kit`](https://github.c
 
 ## Features
 
-- **Bun, TypeScript, Biome, tsdown, Changesets, GitHub Actions** — batteries included
 - **`@solana/kit` client** — `createClient().use(rpc(...))` plugin pattern
+- **Bun, TypeScript, Oxlint, Oxfmt, tsdown, Changesets, GitHub Actions** — batteries included
+- **E2E tests** — real Solana RPC tests via [Surfpool](https://github.com/txtx/surfpool) + [Testcontainers](https://github.com/beeman/testcontainers)
 - **Explorer URL helper** — generate Solana Explorer links
 - **WebSocket URL derivation** — automatic `wss://` from `https://` RPC URLs
-- **E2E tests** — real Solana RPC tests via [Surfpool](https://github.com/txtx/surfpool) + [Testcontainers](https://github.com/beeman/testcontainers)
 
 ## Installation
 
@@ -56,9 +56,14 @@ bun run ruler:apply  # apply AI agent rules
 bun run build
 bun run check-types
 bun run lint
+bun run lint:fix
 bun test           # unit tests
 bun run test:e2e   # e2e tests (requires Docker)
 ```
+
+`lint` checks lint rules and formatting; `lint:fix` applies fixes and formats files. Both fail on lint warnings.
+Perfectionist sorts interface members, JSX props, object keys, and object types alphabetically; Oxfmt sorts imports.
+Arbitrary JSON keys are not automatically sorted. `package.json` is formatted without reordering its keys.
 
 ## Testing
 

@@ -44,7 +44,7 @@
       "path": "bun-library"
     },
     {
-      "description": "TypeScript library for Solana development with @solana/kit, Surfpool e2e tests, Bun, tsdown, Biome, and Changesets",
+      "description": "TypeScript library for Solana development with @solana/kit, Surfpool e2e tests, Bun, tsdown, Oxlint, Oxfmt, and Changesets",
       "id": "gh:create-seed/templates/bun-library-solana-kit",
       "instructions": [
         "Create a GitHub repository for this project:",

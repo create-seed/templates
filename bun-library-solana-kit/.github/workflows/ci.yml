@@ -38,8 +38,6 @@ jobs:
       - name: Publish to pkg.pr.new
         run: bun pkg-pr-new publish --packageManager=bun .
 
-
-
   check-types:
     runs-on: ubuntu-latest
     steps:
